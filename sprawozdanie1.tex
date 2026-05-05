@@ -1,0 +1,676 @@
+% ============================================================
+%  Dokumentacja Analityczno-Projektowa
+%  Mobilny System Wspomagania Honorowych Dawców Krwi
+% ============================================================
+\documentclass[11pt, a4paper]{article}
+
+% ── Encoding & Language ──────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[provide=*,polish]{babel}
+
+% ── Typography ───────────────────────────────────────────────
+\usepackage{palatino}
+\usepackage{microtype}
+\usepackage{setspace}
+\setstretch{1.15}
+
+% ── Page Layout ──────────────────────────────────────────────
+\usepackage[
+  top=25mm, bottom=28mm,
+  left=28mm, right=28mm,
+  headheight=14pt
+]{geometry}
+
+% ── Headers & Footers ────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancyhead[L]{\small\textit{Dokumentacja Analityczno-Projektowa}}
+\fancyhead[R]{\small\textit{System Krwiodawstwa }}
+\fancyfoot[C]{\small\thepage}
+
+% ── Section Styling ──────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\large\bfseries\scshape}
+  {\thesection.}{0.6em}{}[\titlerule]
+\titlespacing{\section}{0pt}{18pt}{8pt}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}
+  {\thesubsection.}{0.5em}{}
+\titlespacing{\subsection}{0pt}{12pt}{4pt}
+
+\titleformat{\subsubsection}
+  {\normalfont\small\bfseries\itshape}
+  {\thesubsubsection.}{0.5em}{}
+\titlespacing{\subsubsection}{0pt}{8pt}{3pt}
+
+% ── Tables ───────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.35}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% ── Requirement Cards ────────────────────────────────────────
+\usepackage{mdframed}
+\usepackage{xparse}
+
+\mdfdefinestyle{reqcard}{
+  linewidth=0.5pt,
+  linecolor=black,
+  backgroundcolor=white,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=10pt,
+  skipbelow=6pt,
+  roundcorner=2pt,
+}
+
+\mdfdefinestyle{reqheader}{
+  linewidth=0.5pt,
+  linecolor=black,
+  backgroundcolor=black!8,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=0pt,
+  skipbelow=0pt,
+  roundcorner=2pt,
+}
+
+% ── Lists ────────────────────────────────────────────────────
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.4em, topsep=3pt, itemsep=2pt, parsep=0pt}
+\setlist[enumerate]{leftmargin=1.6em, topsep=3pt, itemsep=2pt, parsep=0pt}
+
+% ── Misc ─────────────────────────────────────────────────────
+\usepackage{parskip}
+\setlength{\parskip}{5pt}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage[gray]{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=false, pdfborder={0 0 0}}
+\usepackage{caption}
+
+% ── Helpers ──────────────────────────────────────────────────
+\newcommand{\req}[1]{\texttt{#1}}
+\newcommand{\term}[1]{\textbf{#1}}
+\newcommand{\sys}{\textsc{hdk\,app}\xspace}
+
+% ════════════════════════════════════════════════════════════
+\begin{document}
+% ════════════════════════════════════════════════════════════
+
+% ── Title Page ───────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{30mm}
+
+  {\fontsize{9}{11}\selectfont\scshape dokumentacja analityczno-projektowa}\\[4mm]
+  \rule{0.55\linewidth}{0.4pt}\\[6mm]
+
+  {\fontsize{22}{28}\selectfont\bfseries
+    Mobilny System Wspomagania\\[3mm]
+    i Monitorowania Aktywności\\[3mm]
+    Honorowych Dawców Krwi}\\[8mm]
+
+  \rule{0.55\linewidth}{0.4pt}\\[6mm]
+
+  {\large\itshape 
+  Daniel Abbas 281134 \\[1mm]
+                    Jakub Adamczyk 281206 \\[1mm]
+                    Jakub Kret 281182\\[6mm]
+
+
+  \begin{tabular}{rl}
+    \toprule
+    \textbf{Status} & Projekt wstępny \\
+    \textbf{Data}   & 18.04.2026 \\
+    \textbf{Platforma} & Android (Flutter) \\
+    \bottomrule
+  \end{tabular}
+
+  \vfill
+  {\small\scshape projekt zespołowy \,·\, informatyka techniczna}
+\end{titlepage}
+
+\newcommand{\letterspacingtext}[1]{#1}
+
+% ── Table of Contents ────────────────────────────────────────
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+% ════════════════════════════════════════════════════════════
+\section{Wstęp i założenia organizacyjne projektu}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Kontekst inicjacji i cele zespołu}
+
+Głównym celem systemu jest stworzenie cyfrowego ekosystemu, który nie tylko ułatwia
+logistykę oddawania krwi (śledzenie terminów, lokalizacja punktów pobrań), ale przede
+wszystkim buduje trwałą relację z dawcą i promuje postawy prospołeczne.
+
+Analiza dostępnych rozwiązań mobilnych wykazała, że brakuje na rynku narzędzi, które
+realnie angażowałyby dawców i spełniały ich oczekiwania.
+Aplikacja ma wypełnić tę lukę poprzez:
+
+\begin{itemize}
+  \item \textbf{Personalizację:} dostosowanie komunikatów do konkretnego użytkownika.
+  \item \textbf{Grywalizację:} wprowadzenie mechanizmów zwiększających motywację i retencję dawców.
+  \item \textbf{Użyteczność:} nowoczesne podejście do doświadczeń medycznych (UX w zdrowiu).
+\end{itemize}
+
+\subsubsection*{Metodyka i standardy}
+
+\begin{itemize}
+  \item \textbf{Zarządzanie:} uwzględniliśmy podział ról w zespole, analizę ryzyka oraz harmonogram prac.
+  \item \textbf{Estymacja kosztów:} koszty produkcji oszacowano empirycznie.
+  \item \textbf{Specyfikacja wymagań:} wymagania funkcjonalne i niefunkcjonalne opisaliśmy zgodnie
+        z uznanym wzorcem \textbf{Volere}.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Dekompozycja ról i zakresy odpowiedzialności w zespole}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{3.8cm} X}
+  \toprule
+  \textbf{Rola w~Zespole} & \textbf{Zakres Odpowiedzialności i Zadania Techniczne} \\
+  \midrule
+  Lider Projektu / Architekt Frontendu i~UI/UX
+    & Reprezentacja zespołu na zewnątrz, prowadzenie spotkań weekly, przesyłanie
+      dokumentacji. Technicznie: projektowanie użyteczności aplikacji (UI/UX),
+      implementacja widoków (Flutter), integracja liczników i map oraz projektowanie
+      mechanizmów grywalizacyjnych. \\
+  \addlinespace
+  Główny Inżynier Backendowy / Architekt Algorytmów
+    & Projektowanie i~zapewnienie spójności między logiką serwerową a~frontendem
+      oraz skalowalność i~powtarzalność środowisk dzięki izolacji kontenerowej.
+      Implementacja algorytmów obliczających karencję oraz kalkulatora ulgi podatkowej PIT.
+      Badanie i~implementacja optycznego rozpoznawania znaków (OCR) dla skanera wyników
+      badań morfologicznych. \\
+  \addlinespace
+  Inżynier Danych / Analityk Wymagań (Volere)
+    & Projektowanie autoryzacji oraz architektury powiadomień Push.
+      Odpowiedzialność za inżynierię wymagań metodą Volere.
+      Administracja bazami danych. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\section{Uzasadnienie biznesowe, cele i analiza tła dziedzinowego}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Działalność użytkownika i kontekst problemu biznesowego}
+
+Krew i jej składniki (osocze, płytki krwi) są niemożliwymi do sztucznego wyprodukowania,
+krytycznymi zasobami terapeutycznymi. System krwiodawstwa w Polsce opiera się na idei
+honorowego dawstwa, jednakże struktura demograficzna dawców ulega starzeniu, a pozyskiwanie
+i — co ważniejsze — utrzymanie przedstawicieli młodszych pokoleń napotyka na znaczne
+trudności.
+
+Główne problemy systemowe identyfikowane z perspektywy dawcy:
+
+\begin{enumerate}
+  \item \textbf{Brak proaktywnej komunikacji:} Centra krwiodawstwa (RCKiK) rzadko informują
+        o spersonalizowanym zapotrzebowaniu na konkretną grupę krwi w sposób natychmiastowy
+        i angażujący.
+
+  \item \textbf{Dezorientacja w zakresie uprawnień:} Przepisy dotyczące odstępów między
+        donacjami są wysoce skomplikowane — różnią się w zależności od oddanego składnika
+        (krew pełna: 8 tygodni, osocze: 2 lub 4 tygodnie, płytki krwi: 4 tygodnie) oraz
+        płci (mężczyźni: do 6 donacji krwi pełnej rocznie, kobiety: do 4 donacji).
+        Błędne wyliczenia prowadzą do wizyt zakończonych odrzuceniem medycznym.
+
+  \item \textbf{Niski poziom cyfryzacji świadczeń:} Mimo postępów w usługach e-zdrowia,
+        dawcy często muszą samodzielnie archiwizować papierowe wyniki badań, a rozliczenie
+        ulgi podatkowej z tytułu darowizny krwi w PIT (130 zł za każdy oddany litr) wymaga
+        manualnego prowadzenia skomplikowanych rejestrów.
+
+  \item \textbf{Brak mechanizmów aktywnej motywacji zewnętrznej:} Badania naukowe wskazują,
+        że brak elementów gamifikacji i natychmiastowych gratyfikacji psychologicznych
+        powoduje spadek partycypacji po pierwszych donacjach.
+\end{enumerate}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Cele projektu}
+
+\begin{itemize}
+  \item \textbf{Zwiększenie częstotliwości i regularności donacji} o prognozowane 20\%
+        w grupie docelowej poprzez implementację zaawansowanych liczników karencji,
+        powiadomień celowanych (o brakach konkretnej grupy krwi) oraz mechanizmów
+        śledzenia programu lojalnościowego.
+
+  \item \textbf{Automatyzacja procesów logistycznych i administracyjnych} dla dawcy,
+        w tym geolokalizacja stałych centrów RCKiK i mobilnych akcji poboru (krwiobusów)
+        na zintegrowanej mapie oraz dostarczenie automatycznego kalkulatora ulgi
+        podatkowej PIT.
+
+  \item \textbf{Zbudowanie spersonalizowanego profilu zdrowotnego,} chroniącego dawcę
+        przed przeciwwskazaniami fizjologicznymi. Cel ten zostanie osiągnięty przez
+        wdrożenie mechaniki monitorowania cyklu miesiączkowego u kobiet oraz cyfrowego
+        archiwum badań z wykorzystaniem optycznego rozpoznawania znaków (OCR).
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Słownik pojęć, konwencje i regulacje dziedzinowe}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{3cm} X}
+  \toprule
+  \textbf{Termin} & \textbf{Definicja} \\
+  \midrule
+  \term{HDK}
+    & Honorowy Dawca Krwi — zarejestrowana w publicznej służbie krwi osoba
+      oddająca bezpłatnie krew lub jej składnik. \\
+  \addlinespace
+  \term{ZHDK}
+    & Zasłużony Honorowy Dawca Krwi — tytuł nadawany przez PCK.
+      Progi litrażowe: kobiety 5\,L / 10\,L / 15\,L; mężczyźni 6\,L / 12\,L / 18\,L.
+      Po oddaniu 20\,L — tytuł MZ „Honorowy Dawca Krwi — Zasłużony dla Zdrowia Narodu". \\
+  \addlinespace
+  \term{RCKiK}
+    & Regionalne Centrum Krwiodawstwa i Krwiolecznictwa — jednostka nadrzędna
+      w danym województwie. \\
+  \addlinespace
+  \term{Karencja}
+    & Ustawowo zdefiniowany, bezwzględnie wymagany czas przerwy między kolejnymi
+      donacjami, chroniący zdrowie dawcy. \\
+  \addlinespace
+  \term{Gamifikacja}
+    & Wykorzystanie mechanik znanych z gier (punkty, odznaki, paski postępu, rankingi)
+      w celu budowania nawyków i zwiększania zaangażowania użytkowników. \\
+  \addlinespace
+  \term{OCR}
+    & \textit{Optical Character Recognition} — algorytmy przekształcające obraz (zdjęcie,
+      skan) w edytowalny ciąg tekstowy; kluczowe do odczytywania wyników morfologii. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\section{Analiza Interesariuszy}
+% ════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{2.6cm} X X L{3cm}}
+  \toprule
+  \textbf{Kategoria} & \textbf{Opis i Charakterystyka} & \textbf{Główne Oczekiwania} & \textbf{Potencjalne Przyczyny Niezadowolenia} \\
+  \midrule
+  Dawcy Kluczowi (Regularni ZHDK)
+    & Osoby oddające krew wielokrotnie, silnie zmotywowane, ukierunkowane
+      na korzyści (zniżki w komunikacji, darmowe leki, obsługa bez kolejki).
+    & Bezbłędny licznik sumujący całkowity litraż. Powiadomienia ułatwiające
+      zdobycie kolejnych odznak. Precyzyjne generowanie podsumowań do PIT/O.
+    & Błędy w sumowaniu litrów wynikające z braku uwzględnienia przeliczników
+      dla różnych składników krwi. \\
+  \addlinespace
+  Dawcy Sporadyczni / Nowi
+    & Młode osoby poszukujące cyfrowych, natychmiastowych wzmocnień
+      motywacyjnych i informacji edukacyjnych.
+    & Nowoczesny interfejs UI, mechaniki grywalizacyjne (zdobywanie poziomów
+      i wirtualnych kropli), mapy pokazujące centra poboru.
+    & Niezrozumiały, przeładowany interfejs kliniczny. \\
+  \addlinespace
+  Kobiety — Dawczynie
+    & Wysoce świadoma grupa, narażona na odrzucenia lekarskie ze względu
+      na wahania poziomu żelaza związane z fizjologią.
+    & Inteligentna, dyskretna integracja kalendarza cyklu miesiączkowego,
+      wstrzymująca alerty i przesuwająca datę możliwej donacji na okno
+      pełnej regeneracji organizmu.
+    & Brak mechanizmów różnicujących płeć w kalkulatorach karencji
+      i stopniach honorowego krwiodawcy. \\
+  \addlinespace
+  Stacje Krwiodawstwa (RCKiK)
+    & Podmioty zarządzające publiczną służbą krwi, audytorzy poprawności
+      stanów magazynowych.
+    & Narzędzie, które poprzez precyzyjne powiadomienia zmniejszy wahania
+      i deficyty magazynowe grup rzadkich (np. AB Rh$-$).
+    & Aplikacja prezentująca dane lub porady medyczne sprzeczne
+      z aktualnymi wytycznymi Ministerstwa Zdrowia. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\section{Analiza Konkurencji i Luka Rynkowa}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Rynek Polski: ograniczenia funkcjonalne i architektoniczne}
+
+\subsubsection*{1. Portal Dawcy „Moja Krew" (RCKiK Radom i systemy ogólnopolskie)}
+\begin{description}[leftmargin=2.8cm, style=sameline]
+  \item[Mocne strony:] Aplikacja połączona bezpośrednio z oficjalnymi bazami danych centrów
+    (e-krew). Posiada podgląd stanów magazynowych krwi oraz cenną funkcję sprawdzania
+    aktualnego stanu kolejek w punktach stacjonarnych.
+  \item[Słabe strony:] Narzędzie określane jako przeładowane informacjami, mało intuicyjne,
+    o zachowawczym projekcie graficznym. Użytkownicy wskazują na braki w angażowaniu ich do
+    powrotu. Brak jest rozbudowanych modułów cyfrowego archiwum zdrowotnego.
+\end{description}
+
+\subsubsection*{2. Aplikacja „Bliscy Krewni" (RCKiK Katowice)}
+\begin{description}[leftmargin=2.8cm, style=sameline]
+  \item[Mocne strony:] Dobrze zorganizowany moduł społeczny i lojalnościowy
+    (,,Lokale Bliskich Krewnych''), pozwalający wylegitymować się aplikacją celem uzyskania
+    realnych, stacjonarnych zniżek w kawiarniach i instytucjach kultury.
+  \item[Słabe strony:] Silnie regionalny charakter — użyteczność aplikacji spada drastycznie
+    poza obszarem Śląska. Doświadcza problemów stabilnościowych, przez co jest nisko
+    oceniana w sklepach z aplikacjami.
+\end{description}
+
+\subsubsection*{3. Prywatne aplikacje (np. „Dawca Krwi" iOS)}
+\begin{description}[leftmargin=2.8cm, style=sameline]
+  \item[Słabe strony:] Opierają się na manualnym wpisywaniu informacji. Często monetyzowane
+    są poprzez reklamy wewnątrz aplikacji.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Wnioski i identyfikacja luk}
+
+Żadna z przebadanych aplikacji nie posiada kompleksowego, łatwego w obsłudze cyfrowego
+archiwum badań morfologicznych działającego w oparciu o silnik sztucznej inteligencji (OCR).
+Użytkownicy zmuszeni są zbierać papierowe świstki, aby monitorować długofalowe trendy
+poziomu żelaza.
+
+Ponadto, na rynku istnieje kompletna próżnia w zakresie uwzględniania biologii
+i endokrynologii kobiet — żadne oprogramowanie krwiodawcze nie integruje się z
+kalendarzem cyklu menstruacyjnego.
+
+% ════════════════════════════════════════════════════════════
+\section{Architektura Funkcjonalności i Priorytety (MoSCoW)}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Jądro Aplikacji (\textit{Must-Have})}
+
+\begin{itemize}
+  \item \textbf{Multiwymiarowe odliczanie do donacji:} Algorytmy obsługują różne przerwy —
+        8~tygodni dla krwi pełnej, 4 lub 2~tygodnie dla płytek krwi oraz osocza,
+        krzyżując interwały w zależności od donacji mieszanych i weryfikując z płcią
+        użytkownika.
+
+  \item \textbf{Interfejs Profilowy (Karta Dawcy):} Ekran główny eksponujący grupę krwi
+        oraz cyfrowy, centralnie ułożony, rosnący licznik oddanych litrów (główny
+        wskaźnik sukcesu).
+
+  \item \textbf{Nawigacja:} Zintegrowana mapa prezentująca Centra Krwiodawstwa (RCKiK).
+\end{itemize}
+
+\subsection{Rzeczy warte wprowadzenia (\textit{Should-Have})}
+
+\begin{itemize}
+  \item \textbf{Alert Zapotrzebowania Grupowego:} Odbieranie powiadomień Push opartych
+        o stan magazynów w danym województwie, gdy wystąpi krytyczny niedobór
+        zadeklarowanej przez użytkownika grupy krwi.
+
+  \item \textbf{Moduł Podatkowy (Odliczenie PIT):} Algorytm kalkulatora finansowego
+        przeliczający zsumowane donacje z danego roku na realną stawkę ulgi podatkowej
+        obowiązującą w latach 2025/2026 (130 zł za litr), pomagając dawcy w
+        uzupełnianiu rocznego załącznika PIT/O.
+
+  \item \textbf{Ścieżka Progresji ZHDK:} Odliczanie litrów potrzebnych do zdobycia
+        kolejnych odznak PCK i Ministerstwa Zdrowia (np. brązowa odznaka 5\,L/6\,L,
+        złota 15\,L/18\,L). Aplikacja zaprezentuje na poszczególnych ,,poziomach''
+        informacje o odblokowanych przywilejach (zniżki PKP, leki ZK, darmowe
+        przejazdy miejskie).
+\end{itemize}
+
+\subsection{Innowacje Opcjonalne (\textit{Could-Have})}
+
+\begin{itemize}
+  \item \textbf{Cyfrowe Archiwum Morfologiczne z OCR:} Wykorzystanie aparatu smartfona
+        i sieci neuronowych (biblioteki rozpoznawania obrazu lub wbudowane silniki
+        iOS/Android) do wykonania skanu wydruku badania laboratoryjnego. Aplikacja
+        automatycznie rozpozna i wyodrębni wskaźniki (np. Hemoglobina, Krwinki białe,
+        Żelazo), zapisując je w bazie i generując wykres historycznych wahań.
+
+  \item \textbf{Funkcjonalność dodawania znajomych:} Możliwość porównania ilości
+        oddanej krwi ze znajomymi i wprowadzenie elementu rywalizacji.
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════
+\section{Specyfikacja Wymagań Funkcjonalnych (Wzorzec Volere)}
+% ════════════════════════════════════════════════════════════
+
+Poniżej przedstawiono karty wymagań sporządzone zgodnie z notacją Volere.
+
+% ── Requirement Card W_FUN_01 ────────────────────────────────
+\begin{mdframed}[style=reqheader]
+  \textbf{Karta:\ \req{W\_FUN\_01}} \hfill
+  \textit{Obliczenia Karencji Donacyjnych}
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \begin{tabbing}
+    \hspace{3.2cm}\=\kill
+    \textbf{Typ}\> Jądro Aplikacji (Wymaganie Funkcjonalne) \\[4pt]
+    \textbf{Opis}\> System musi obliczyć i aktywnie odliczać dni do momentu, w~którym \\
+                \> dawca prawnie i medycznie może powrócić do RCKiK. \\[4pt]
+    \textbf{Przesłanka}\> Okresy są silnie uwarunkowane prawnie. Zależnie od zadeklarowanej \\
+                       \> płci oraz ostatniego składnika donacji stosuje się inną formułę \\
+                       \> upływu czasu (od 48~godzin do 8~tygodni). \\[4pt]
+    \textbf{Kryterium}\> Tester, definiując profil jako ,,Kobieta'', rejestruje donację krwi \\
+    \textbf{spełnienia}\> pełnej w dniu 01.03.2026. System musi wyświetlić datę \\
+                       \> odblokowania na \textbf{26.04.2026} (dokładnie 8~tygodni przerwy) \\
+                       \> i uniemożliwić jej wprowadzenie wcześniejszej donacji krwi pełnej. \\
+                       \> Licznik musi zablokować donacje krwi pełnej na 12~miesięcy po \\
+                       \> odnotowaniu 4.~donacji w danym roku kalendarzowym.
+  \end{tabbing}
+\end{mdframed}
+
+% ── Requirement Card W_FUN_02 ────────────────────────────────
+\begin{mdframed}[style=reqheader]
+  \textbf{Karta:\ \req{W\_FUN\_02}} \hfill
+  \textit{Integracja z Cyklem Menstruacyjnym i Blokady Anemiczne}
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \begin{tabbing}
+    \hspace{3.2cm}\=\kill
+    \textbf{Typ}\> Opcjonalne (Wymaganie Funkcjonalne / Architektura Zdrowotna) \\[4pt]
+    \textbf{Opis}\> Kobiety-dawczynie muszą posiadać mechanizm wprowadzania informacji \\
+                \> o wystąpieniu i czasie trwania cyklu miesiączkowego, celem ingerencji \\
+                \> w globalny kalendarz odliczający karencję. \\[4pt]
+    \textbf{Przesłanka}\> Oddawanie krwi podczas lub krótko po krwawieniu grozi ostrą \\
+                       \> niedokrwistością i skutkuje dyskwalifikacją przez personel lekarski. \\
+                       \> System bez tej funkcjonalności wysyłałby zgubne powiadomienia, \\
+                       \> zachęcając do donacji w najgorszym fizjologicznym momencie. \\[4pt]
+    \textbf{Kryterium}\> Użytkowniczka zaznacza okres menstruacji na dni 10.05.2026–15.05.2026. \\
+    \textbf{spełnienia}\> Jeśli zwykłe wyliczenie karencji pozwalało na powrót 12.05.2026, \\
+                       \> algorytm automatycznie nakłada barierę, nadpisując termin donacji na \\
+                       \> \texttt{[Koniec\_Miesiączki] + 3 dni\_regeneracji}, \\
+                       \> odblokowując system dopiero \textbf{19.05.2026}, uciszając jednocześnie \\
+                       \> wszelkie notyfikacje Push do tego czasu.
+  \end{tabbing}
+\end{mdframed}
+
+% ── Requirement Card W_FUN_03 ────────────────────────────────
+\begin{mdframed}[style=reqheader]
+  \textbf{Karta:\ \req{W\_FUN\_03}} \hfill
+  \textit{Obliczanie Ulgi Podatkowej (Moduł PIT)}
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \begin{tabbing}
+    \hspace{3.2cm}\=\kill
+    \textbf{Typ}\> Warto Wprowadzić (Wymaganie Funkcjonalne / Biznesowe) \\[4pt]
+    \textbf{Opis}\> Aplikacja musi podsumować sumę donacji z danego roku podatkowego \\
+                \> i przetworzyć je na wartość ulgi wyrażoną w PLN, z uwzględnieniem \\
+                \> algorytmicznych limitów. \\[4pt]
+    \textbf{Przesłanka}\> Dawcy uzyskujący dochody opodatkowane (PIT-37, PIT-36, PIT-28) \\
+                       \> często nie wiedzą jak poprawnie skalkulować ulgę w załączniku PIT/O. \\
+                       \> Realny zastrzyk finansowy jest obok satysfakcji najsilniejszym \\
+                       \> zjawiskiem gamifikacyjnym i motywacyjnym. \\[4pt]
+    \textbf{Kryterium}\> Dla donacji zgromadzonych w roku 2025 i 2026, aplikacja przemnaża \\
+    \textbf{spełnienia}\> wpisane przez użytkownika litry (np. 1,8\,L) przez ustawową stawkę \\
+                       \> zdefiniowaną jako zmienna systemowa: \textbf{130\,PLN/litr}. \\
+                       \> Wyświetlony wynik \textbf{234,00\,PLN} jest opatrzony formułką \\
+                       \> przypominającą, że ostateczna odliczona wartość w~deklaracji nie \\
+                       \> może przekroczyć 6\% rocznego dochodu/przychodu dawcy.
+  \end{tabbing}
+\end{mdframed}
+
+% ── Requirement Card W_FUN_04 ────────────────────────────────
+\begin{mdframed}[style=reqheader]
+  \textbf{Karta:\ \req{W\_FUN\_04}} \hfill
+  \textit{Ścieżka Gamifikacji, Odznaki i Przywileje ZHDK}
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \begin{tabbing}
+    \hspace{3.2cm}\=\kill
+    \textbf{Typ}\> Warto Wprowadzić (Wymaganie Funkcjonalne / Systemy Lojalnościowe) \\[4pt]
+    \textbf{Opis}\> Po każdej donacji system musi operować graficznymi paskami postępu \\
+                \> wypełniającymi się aż do uzyskania kolejnego ustawowego progu ZHDK. \\[4pt]
+    \textbf{Przesłanka}\> Dawcy, znając konkretny benefit powiązany z progiem \\
+                       \> (np. 18\,L u mężczyzny na darmową komunikację miejską), \\
+                       \> wykazują silną skłonność do skrócenia przerw między wizytami \\
+                       \> w RCKiK. \\[4pt]
+    \textbf{Kryterium}\> Pasek postępu dla mężczyzny z historią 11,0\,L powinien wskazywać \\
+    \textbf{spełnienia}\> stan osiągnięty jako \textbf{Brązowa Odznaka (6\,L)} i wizualizować \\
+                       \> brakujący 1,0\,L do \textbf{Srebrnej Odznaki (12\,L)}. \\
+                       \> Po naciśnięciu wskaźnika poziomu ,,Srebro'', na ekranie powinna \\
+                       \> ukazać się lista przywilejów (obsługa bez kolejki w aptekach, \\
+                       \> darmowe leki dla ZHDK według uprawnień ,,ZK'').
+  \end{tabbing}
+\end{mdframed}
+
+% ── Requirement Card W_FUN_05 ────────────────────────────────
+\begin{mdframed}[style=reqheader]
+  \textbf{Karta:\ \req{W\_FUN\_05}} \hfill
+  \textit{OCR i Cyfrowe Archiwum Morfologiczne}
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \begin{tabbing}
+    \hspace{3.2cm}\=\kill
+    \textbf{Typ}\> Opcjonalne (Wymaganie Funkcjonalne / Integracja Modułów Zewnętrznych AI) \\[4pt]
+    \textbf{Opis}\> Użytkownik wykorzystuje aparat systemowy z poziomu aplikacji \\
+                \> w celu skanowania obrazu fizycznego wydruku badań laboratoryjnych \\
+                \> uzyskanych w RCKiK przed donacją, w celu zasilenia bazy trendów \\
+                \> zdrowotnych. \\[4pt]
+    \textbf{Przesłanka}\> OCR w medycynie eliminuje konieczność manualnego wpisywania \\
+                       \> dziesiątek wskaźników przez pacjenta, minimalizując błędy ludzkie. \\
+                       \> Krwiodawcy traktują regularne oddawanie krwi jako formę darmowych, \\
+                       \> cyklicznych badań profilaktycznych. \\[4pt]
+    \textbf{Kryterium}\> Mechanizm OCR parsując zrobione w dobrym oświetleniu zdjęcie formatu \\
+    \textbf{spełnienia}\> A4, przy użyciu wyrażeń regularnych (Regex), musi rozpoznać tag \\
+                       \> \texttt{HGB} (Hemoglobina) i pomyślnie zlokalizować sąsiadującą \\
+                       \> zmiennoprzecinkową wartość cyfrową (np. \texttt{14.2}), po czym \\
+                       \> zaproponować użytkownikowi naniesienie jej jako nowego punktu na \\
+                       \> osi czasu wykresu morfologicznego w zaledwie 3~kliknięciach.
+  \end{tabbing}
+\end{mdframed}
+
+% ════════════════════════════════════════════════════════════
+\section{Wymagania Niefunkcjonalne i Stos Technologiczny}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Wymagania dotyczące używalności i estetyki}
+
+\begin{itemize}
+  \item \textbf{Wizualna tożsamość:} Interfejs musi budzić zaufanie, w tonacjach bieli
+        i czerwieni (konotacje medyczne, zbliżone do UI Red Cross i Moja Krew).
+        Centralny, dominujący na ekranie licznik litrów oraz odliczanie do nowej donacji
+        muszą być zrealizowane czytelnymi wskaźnikami.
+
+  \item \textbf{Ergonomia dla seniorów ZHDK:} Z uwagi na starzejącą się pulę
+        długoletnich dawców (Zasłużonych dla Zdrowia Narodu, powyżej 20~litrów krwi),
+        czcionki muszą ulegać dynamicznemu skalowaniu w odpowiedzi na systemowe
+        ustawienia ułatwień dostępu na Android (Accessibility standards).
+
+  \item \textbf{Nawigacja Map:} Przeglądanie akcji lokalnych na mapie nie może być
+        blokowane powolnym wczytywaniem bazy danych; należy wdrożyć clusterowanie
+        znaczników geolokalizacyjnych stacji krwiodawstwa w przypadku oddalenia
+        obrazu (\textit{zoom out}).
+\end{itemize}
+
+\subsection{Architektura Wykonawcza i Stos Technologiczny}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{3.5cm} X}
+  \toprule
+  \textbf{Warstwa} & \textbf{Technologia i uzasadnienie} \\
+  \midrule
+  Frontend mobilny
+    & \textbf{Flutter} (cross-platform) — generowanie jednoścież kowego kodu
+      na platformę Android. Umożliwia implementację UI/UX z natywną
+      wydajnością. \\
+  \addlinespace
+  AI / OCR
+    & \textbf{Google ML Kit} (Android) — bezpłatne, działające offline
+      procesowanie bloków tekstu z fotografii. Mityguje obciążenie serwera
+      chmurowego kosztownymi wyliczeniami obrazu. \\
+  \addlinespace
+  Backend / Powiadomienia
+    & \textbf{Firebase BaaS} — szybkie wdrożenie usług Cloud Messaging
+      (wysyłanie powiadomień Push o brakach krwi z centrali) oraz
+      logowania użytkowników. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\section{Podsumowanie Wniosków Projektowych}
+% ════════════════════════════════════════════════════════════
+
+W projekcie skupiamy się na sektorze \textit{Digital Health}, ponieważ zauważyliśmy,
+że dzisiejszy krwiodawca to nie tylko ,,pacjent'', ale przede wszystkim świadomy
+użytkownik smartfona. Oczekuje on konkretów: przejrzystych raportów, informacji
+o odznaczeniach i łatwego dostępu do benefitów, takich jak ulgi PIT czy
+programy lojalnościowe.
+
+\subsubsection*{Co rozwiązujemy?}
+
+Nasza aplikacja uderza prosto w problemy, z którymi nie radzą sobie przestarzałe,
+państwowe portale e-zdrowia (biurokracja i przestarzały interfejs). Kluczowe cechy
+systemu:
+
+\begin{itemize}
+  \item \textbf{Precyzyjne algorytmy:} Serce systemu to liczniki donacji, które
+        bezbłędnie uwzględniają płeć i typ krwi.
+
+  \item \textbf{Innowacyjne funkcje (AI \& OCR):} Zgodnie z analizą MoSCoW,
+        wzbogaciliśmy projekt o dodatkowe funkcje — m.in. skanowanie wyników badań
+        laboratoryjnych przy użyciu sztucznej inteligencji (OCR).
+
+  \item \textbf{Bezpieczeństwo i etyka:} Wprowadziliśmy inteligentne blokady przed
+        zbyt wczesnym oddaniem krwi (np. uwzględniając cykl menstruacyjny u kobiet).
+
+  \item \textbf{Grywalizacja:} Wdrożyliśmy system poziomów, co zamienia oddawanie krwi
+        w angażującą ścieżkę użytkownika.
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════
+\section*{Bibliografia}
+% ════════════════════════════════════════════════════════════
+\addcontentsline{toc}{section}{Bibliografia}
+
+\begin{enumerate}[label={[\arabic*]}]
+  \item \textit{Optimizing the Blood Donation App with Gamification Using User-Centered Design},
+        ResearchGate, 2024. \url{https://www.researchgate.net/publication/377518409}
+
+  \item \textit{Dopuszczalne odstępy między donacjami krwi pełnej i jej składników},
+        Krwiodawcy.org. \url{https://krwiodawcy.org/dopuszczalne-odstepy-miedzy-donacjami}
+
+  \item \textit{Darowizny na krwiodawstwo PIT}, podatki.gov.pl.
+        \url{https://www.podatki.gov.pl/ulgi-i-odliczenia/darowizny-na-krwiodawstwo-pit/}
+
+  \item \textit{Kalendarz donacji}, Krwiodawstwo.pl.
+        \url{https://krwiodawstwo.pl/kalendarz-donacji/}
+
+  \item \textit{Program lojalnościowy | Twoja krew, moje życie}, twojakrew.pl.
+        \url{https://www.twojakrew.pl/program-lojalnosciowy/}
+
+  \item \textit{Korzyści z HDK — Honorowe krwiodawstwo i krwiolecznictwo}, Krwiodawcy.org.
+        \url{https://krwiodawcy.org/korzysci-z-hdk}
+
+  \item \textit{Odznaki Zasłużonego Honorowego Dawcy Krwi}, Krwiodawcy.org.
+        \url{https://krwiodawcy.org/odznaki/odznaki-zhdk}
+\end{enumerate}
+
+\end{document}

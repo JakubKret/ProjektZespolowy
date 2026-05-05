@@ -1,0 +1,130 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-mono);font-size:12.5px;line-height:1.6}
+.root{padding:1rem 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.leg{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--color-text-secondary)}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tree{line-height:1.8}
+.row{display:flex;align-items:baseline;gap:0;white-space:pre;cursor:default}
+.row:hover .label{background:var(--color-background-secondary);border-radius:3px}
+.prefix{color:var(--color-text-tertiary);user-select:none}
+.icon{font-size:11px;margin-right:4px;user-select:none}
+.label{padding:0 3px;transition:background .1s}
+.badge{font-size:10px;padding:1px 6px;border-radius:10px;margin-left:8px;font-family:var(--font-sans);line-height:1.6;vertical-align:middle}
+
+.c-flutter .label{color:#185FA5}
+.c-flutter .dot,.c-flutter .badge{background:#E6F1FB;color:#0C447C}
+.c-notifier .label{color:#0F6E56}
+.c-notifier .dot,.c-notifier .badge{background:#E1F5EE;color:#085041}
+.c-infra .label{color:#BA7517}
+.c-infra .dot,.c-infra .badge{background:#FAEEDA;color:#633806}
+.c-contracts .label{color:#993C1D}
+.c-contracts .dot,.c-contracts .badge{background:#FAECE7;color:#4A1B0C}
+.c-docs .label{color:#5F5E5A}
+.c-docs .dot,.c-docs .badge{background:#F1EFE8;color:#2C2C2A}
+.c-rm .label{color:#A32D2D}
+.c-rm .badge{background:#FCEBEB;color:#501313}
+.dim .label{color:var(--color-text-tertiary)}
+.ann{font-family:var(--font-sans);font-size:11px;color:var(--color-text-secondary);margin-left:8px;font-style:italic;white-space:normal}
+.removed{text-decoration:line-through;opacity:0.4}
+.section-gap{height:4px}
+</style>
+<div class="root">
+<div class="legend">
+  <span class="leg"><span class="dot c-flutter"></span>mobile-app (Flutter)</span>
+  <span class="leg"><span class="dot c-notifier"></span>external-notifier</span>
+  <span class="leg"><span class="dot c-infra"></span>infra / CI</span>
+  <span class="leg"><span class="dot c-contracts"></span>shared-contracts</span>
+  <span class="leg"><span class="dot c-docs"></span>docs</span>
+</div>
+<div class="tree">
+
+<div class="row dim"><span class="prefix">   </span><span class="icon">📁</span><span class="label">hdk-system/</span></div>
+<div class="row c-docs"><span class="prefix">├─ </span><span class="icon">📁</span><span class="label">docs/</span></div>
+<div class="row c-docs"><span class="prefix">│  ├─ </span><span class="icon">📄</span><span class="label">architecture/system-context.md</span></div>
+<div class="row c-docs"><span class="prefix">│  ├─ </span><span class="icon">📄</span><span class="label">medical-data/privacy-and-compliance.md</span></div>
+<div class="row c-docs"><span class="prefix">│  └─ </span><span class="icon">📄</span><span class="label">decisions/adr-0001-no-remote-backend.md</span><span class="ann">← nowe ADR uzasadniające RODO</span></div>
+
+<div class="section-gap"></div>
+
+<div class="row c-flutter"><span class="prefix">├─ </span><span class="icon">📁</span><span class="label">mobile-app/</span><span class="badge c-flutter">Flutter + drift</span></div>
+<div class="row c-flutter"><span class="prefix">│  ├─ </span><span class="icon">📄</span><span class="label">pubspec.yaml</span></div>
+<div class="row c-flutter"><span class="prefix">│  ├─ </span><span class="icon">📁</span><span class="label">lib/</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  ├─ </span><span class="icon">📄</span><span class="label">main.dart</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">app/</span><span class="ann">router, theme, DI</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">core/</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  │  ├─ </span><span class="icon">📁</span><span class="label">database/</span><span class="ann">definicja AppDatabase (drift) + migracje</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  │  │  ├─ </span><span class="icon">📄</span><span class="label">app_database.dart</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  │  │  └─ </span><span class="icon">📁</span><span class="label">migrations/</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  │  └─ </span><span class="icon">📁</span><span class="label">fcm/</span><span class="ann">tylko odbiór powiadomień FCM (brak Firestore)</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  └─ </span><span class="icon">📁</span><span class="label">features/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">donor_profile/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">data/</span><span class="ann">DAOs (drift), repozytoria</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">domain/</span><span class="ann">modele, use-cases</span></div>
+<div class="row dim"><span class="prefix">│  │     │  └─ </span><span class="icon">📁</span><span class="label">presentation/</span><span class="ann">screens, widgets</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">donation_countdown/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">data/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">domain/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  │  └─ </span><span class="icon">📄</span><span class="label">eligibility_calculator.dart</span><span class="ann">⬅ W_FUN_01 — serce algorytmu karencji</span></div>
+<div class="row dim"><span class="prefix">│  │     │  └─ </span><span class="icon">📁</span><span class="label">presentation/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">menstrual_cycle/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">data/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">domain/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  │  └─ </span><span class="icon">📄</span><span class="label">cycle_block_calculator.dart</span><span class="ann">⬅ W_FUN_02 — blokady anemiczne</span></div>
+<div class="row dim"><span class="prefix">│  │     │  └─ </span><span class="icon">📁</span><span class="label">presentation/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">morphology_ocr/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">data/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  │  ├─ </span><span class="icon">📁</span><span class="label">daos/</span><span class="ann">MORPHOLOGY_RESULTS DAO</span></div>
+<div class="row dim"><span class="prefix">│  │     │  │  └─ </span><span class="icon">📁</span><span class="label">ocr_parser/</span><span class="ann">ML Kit + regex HGB/HCT/PLT itd.</span></div>
+<div class="row dim"><span class="prefix">│  │     │  ├─ </span><span class="icon">📁</span><span class="label">domain/</span></div>
+<div class="row dim"><span class="prefix">│  │     │  └─ </span><span class="icon">📁</span><span class="label">presentation/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">badges_gamification/</span><span class="ann">W_FUN_04</span></div>
+<div class="row c-flutter"><span class="prefix">│  │     ├─ </span><span class="icon">📁</span><span class="label">pit_calculator/</span><span class="ann">W_FUN_03</span></div>
+<div class="row c-flutter"><span class="prefix">│  │     └─ </span><span class="icon">📁</span><span class="label">maps_locations/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  ├─ </span><span class="icon">📁</span><span class="label">assets/</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  ├─ </span><span class="icon">📄</span><span class="label">db/blood_centers_seed.json</span><span class="ann">RCKiK lokalizacje — wgrane przy pierwszym uruchomieniu</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  ├─ </span><span class="icon">📄</span><span class="label">db/zhdk_badge_definitions.json</span><span class="ann">progi ZHDK — statyczne dane referencyjne</span></div>
+<div class="row c-flutter"><span class="prefix">│  │  └─ </span><span class="icon">📁</span><span class="label">l10n/ icons/</span></div>
+
+<div class="row c-flutter"><span class="prefix">│  └─ </span><span class="icon">📁</span><span class="label">test/</span></div>
+<div class="row c-flutter"><span class="prefix">│     ├─ </span><span class="icon">📄</span><span class="label">unit/eligibility_calculator_test.dart</span></div>
+<div class="row c-flutter"><span class="prefix">│     ├─ </span><span class="icon">📄</span><span class="label">unit/pit_calculator_test.dart</span></div>
+<div class="row c-flutter"><span class="prefix">│     └─ </span><span class="icon">📄</span><span class="label">unit/ocr_parser_test.dart</span></div>
+
+<div class="section-gap"></div>
+
+<div class="row c-notifier"><span class="prefix">├─ </span><span class="icon">📁</span><span class="label">external-notifier/</span><span class="badge c-notifier">Docker — brak dostępu do danych medycznych</span></div>
+<div class="row c-notifier"><span class="prefix">│  ├─ </span><span class="icon">📄</span><span class="label">Dockerfile</span></div>
+<div class="row c-notifier"><span class="prefix">│  ├─ </span><span class="icon">📁</span><span class="label">src/</span></div>
+<div class="row c-notifier"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">scheduler/</span><span class="ann">cron jobs scrape RCKiK</span></div>
+<div class="row c-notifier"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">collectors/</span><span class="ann">adaptery per region (pobieranie stanów krwi)</span></div>
+<div class="row c-notifier"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">matching/</span><span class="ann">blood_group_matcher, region_matcher</span></div>
+<div class="row c-notifier"><span class="prefix">│  │  ├─ </span><span class="icon">📁</span><span class="label">fcm/</span><span class="ann">topic_builder → /pl-{region}-{group}-{rh}, message_builder</span></div>
+<div class="row c-notifier"><span class="prefix">│  │  └─ </span><span class="icon">📄</span><span class="label">main.ts</span></div>
+<div class="row c-notifier"><span class="prefix">│  └─ </span><span class="icon">📁</span><span class="label">config/</span><span class="ann">regions.yaml, thresholds.yaml</span></div>
+
+<div class="section-gap"></div>
+
+<div class="row c-contracts"><span class="prefix">├─ </span><span class="icon">📁</span><span class="label">shared-contracts/</span><span class="badge c-contracts">minimalna — tylko FCM schema</span></div>
+<div class="row c-contracts"><span class="prefix">│  └─ </span><span class="icon">📄</span><span class="label">fcm-blood-demand-message.schema.json</span><span class="ann">jedyny kontrakt między notifier a app</span></div>
+
+<div class="section-gap"></div>
+
+<div class="row c-infra"><span class="prefix">├─ </span><span class="icon">📁</span><span class="label">infra/</span></div>
+<div class="row c-infra"><span class="prefix">│  ├─ </span><span class="icon">📄</span><span class="label">docker-compose.yml</span><span class="ann">tylko external-notifier</span></div>
+<div class="row c-infra"><span class="prefix">│  └─ </span><span class="icon">📁</span><span class="label">firebase/</span><span class="ann">service-account.README.md — instrukcja FCM (bez Firestore)</span></div>
+
+<div class="row c-infra"><span class="prefix">└─ </span><span class="icon">📁</span><span class="label">ci/</span></div>
+<div class="row c-infra"><span class="prefix">   ├─ </span><span class="icon">📄</span><span class="label">mobile-app.yml</span></div>
+<div class="row c-infra"><span class="prefix">   └─ </span><span class="icon">📄</span><span class="label">external-notifier.yml</span></div>
+
+</div>
+</div>
