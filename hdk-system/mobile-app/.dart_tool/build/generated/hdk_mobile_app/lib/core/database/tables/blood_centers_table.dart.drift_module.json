@@ -1,0 +1,266 @@
+{
+  "elements": {
+    "blood_centers": {
+      "id": {
+        "library_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+        "name": "blood_centers"
+      },
+      "declaration": {
+        "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+        "offset": 42,
+        "name": "BloodCentersTable"
+      },
+      "references": [],
+      "type": "table",
+      "columns": [
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "id",
+          "nameInDart": "id",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 148,
+            "name": "id"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [
+            {
+              "type": "primary",
+              "is_auto_increment": true
+            }
+          ],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "name",
+          "nameInDart": "name",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 200,
+            "name": "name"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "city",
+          "nameInDart": "city",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 235,
+            "name": "city"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "address",
+          "nameInDart": "address",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 270,
+            "name": "address"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": true,
+          "nameInSql": "latitude",
+          "nameInDart": "latitude",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 319,
+            "name": "latitude"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": true,
+          "nameInSql": "longitude",
+          "nameInDart": "longitude",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 369,
+            "name": "longitude"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "bool"
+          },
+          "nullable": false,
+          "nameInSql": "is_mobile",
+          "nameInDart": "isMobile",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 420,
+            "name": "isMobile"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              "const ",
+              {
+                "lexeme": "Constant",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              },
+              "(false)"
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "phone",
+          "nameInDart": "phone",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 503,
+            "name": "phone"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "operating_hours_json",
+          "nameInDart": "operatingHoursJson",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 550,
+            "name": "operatingHoursJson"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "last_updated",
+          "nameInDart": "lastUpdated",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/blood_centers_table.dart",
+            "offset": 614,
+            "name": "lastUpdated"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              {
+                "lexeme": "currentDateAndTime",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              }
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        }
+      ],
+      "existing_data_class": null,
+      "table_constraints": [],
+      "custom_parent_class": null,
+      "interfaces_for_row_class": [],
+      "fixed_entity_info_name": null,
+      "base_dart_name": "BloodCentersTable",
+      "row_class_name": "BloodCentersTableData",
+      "companion_class_name": null,
+      "without_rowid": false,
+      "strict": false,
+      "write_default_constraints": true,
+      "custom_constraints": [],
+      "attached_indices": []
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart"
+  ]
+}

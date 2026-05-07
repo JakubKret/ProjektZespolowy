@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 
 class MenstrualCyclesTable extends Table {
+  @override
+  String get tableName => 'menstrual_cycles';
   IntColumn get id => integer().autoIncrement()();
   IntColumn get donorProfileId => integer()();
   DateTimeColumn get startDate => dateTime()();

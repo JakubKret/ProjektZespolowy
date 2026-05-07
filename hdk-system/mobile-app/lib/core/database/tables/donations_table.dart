@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 
 class DonationsTable extends Table {
+  @override
+  String get tableName => 'donations';
   IntColumn get id => integer().autoIncrement()();
   IntColumn get donorProfileId => integer()();
   IntColumn get bloodCenterId => integer()();

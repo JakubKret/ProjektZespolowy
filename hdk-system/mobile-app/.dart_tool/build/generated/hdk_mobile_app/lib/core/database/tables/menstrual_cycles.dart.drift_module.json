@@ -1,0 +1,184 @@
+{
+  "elements": {
+    "menstrual_cycles": {
+      "id": {
+        "library_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+        "name": "menstrual_cycles"
+      },
+      "declaration": {
+        "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+        "offset": 42,
+        "name": "MenstrualCyclesTable"
+      },
+      "references": [],
+      "type": "table",
+      "columns": [
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "id",
+          "nameInDart": "id",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 153,
+            "name": "id"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [
+            {
+              "type": "primary",
+              "is_auto_increment": true
+            }
+          ],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "donor_profile_id",
+          "nameInDart": "donorProfileId",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 204,
+            "name": "donorProfileId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "start_date",
+          "nameInDart": "startDate",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 256,
+            "name": "startDate"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": true,
+          "nameInSql": "end_date",
+          "nameInDart": "endDate",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 304,
+            "name": "endDate"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "bool"
+          },
+          "nullable": false,
+          "nameInSql": "is_active",
+          "nameInDart": "isActive",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 357,
+            "name": "isActive"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              "const ",
+              {
+                "lexeme": "Constant",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              },
+              "(true)"
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "created_at",
+          "nameInDart": "createdAt",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+            "offset": 443,
+            "name": "createdAt"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              {
+                "lexeme": "currentDateAndTime",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              }
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        }
+      ],
+      "existing_data_class": null,
+      "table_constraints": [],
+      "custom_parent_class": null,
+      "interfaces_for_row_class": [],
+      "fixed_entity_info_name": null,
+      "base_dart_name": "MenstrualCyclesTable",
+      "row_class_name": "MenstrualCyclesTableData",
+      "companion_class_name": null,
+      "without_rowid": false,
+      "strict": false,
+      "write_default_constraints": true,
+      "custom_constraints": [
+        "FOREIGN KEY (donor_profile_id) REFERENCES donor_profile(id) ON DELETE CASCADE"
+      ],
+      "attached_indices": []
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart"
+  ]
+}

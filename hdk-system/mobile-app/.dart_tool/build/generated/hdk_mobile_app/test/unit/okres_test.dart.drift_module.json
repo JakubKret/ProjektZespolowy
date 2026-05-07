@@ -1,0 +1,11 @@
+{
+  "elements": {},
+  "imports": [
+    "package:drift/drift.dart",
+    "package:drift/native.dart",
+    "package:flutter_test/flutter_test.dart",
+    "package:hdk_mobile_app/core/database/app_database.dart",
+    "package:hdk_mobile_app/core/database/daos/menstrual_cycles_dao.dart",
+    "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart"
+  ]
+}

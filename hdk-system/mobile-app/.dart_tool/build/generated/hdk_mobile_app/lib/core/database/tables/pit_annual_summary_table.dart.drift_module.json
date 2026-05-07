@@ -1,0 +1,239 @@
+{
+  "elements": {
+    "pit_annual_summary": {
+      "id": {
+        "library_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+        "name": "pit_annual_summary"
+      },
+      "declaration": {
+        "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+        "offset": 42,
+        "name": "PitAnnualSummaryTable"
+      },
+      "references": [],
+      "type": "table",
+      "columns": [
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "id",
+          "nameInDart": "id",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 157,
+            "name": "id"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [
+            {
+              "type": "primary",
+              "is_auto_increment": true
+            }
+          ],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "donor_profile_id",
+          "nameInDart": "donorProfileId",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 208,
+            "name": "donorProfileId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "tax_year",
+          "nameInDart": "taxYear",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 255,
+            "name": "taxYear"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "int"
+          },
+          "nullable": false,
+          "nameInSql": "total_volume_ml",
+          "nameInDart": "totalVolumeMl",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 295,
+            "name": "totalVolumeMl"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": false,
+          "nameInSql": "rate_pln_per_liter",
+          "nameInDart": "ratePlnPerLiter",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 342,
+            "name": "ratePlnPerLiter"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": false,
+          "nameInSql": "gross_deduction_pln",
+          "nameInDart": "grossDeductionPln",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 388,
+            "name": "grossDeductionPln"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": false,
+          "nameInSql": "income6_pct_cap",
+          "nameInDart": "income6PctCap",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 436,
+            "name": "income6PctCap"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": false,
+          "nameInSql": "net_deduction_pln",
+          "nameInDart": "netDeductionPln",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 480,
+            "name": "netDeductionPln"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "last_calculated_at",
+          "nameInDart": "lastCalculatedAt",
+          "declaration": {
+            "source_uri": "package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart",
+            "offset": 530,
+            "name": "lastCalculatedAt"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              {
+                "lexeme": "currentDateAndTime",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              }
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        }
+      ],
+      "existing_data_class": null,
+      "table_constraints": [],
+      "custom_parent_class": null,
+      "interfaces_for_row_class": [],
+      "fixed_entity_info_name": null,
+      "base_dart_name": "PitAnnualSummaryTable",
+      "row_class_name": "PitAnnualSummaryTableData",
+      "companion_class_name": null,
+      "without_rowid": false,
+      "strict": false,
+      "write_default_constraints": true,
+      "custom_constraints": [
+        "FOREIGN KEY (donor_profile_id) REFERENCES donor_profile(id) ON DELETE CASCADE",
+        "UNIQUE (donor_profile_id, tax_year)"
+      ],
+      "attached_indices": []
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart"
+  ]
+}

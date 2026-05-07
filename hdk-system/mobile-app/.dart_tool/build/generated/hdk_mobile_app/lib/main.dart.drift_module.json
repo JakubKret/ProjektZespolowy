@@ -1,0 +1,7 @@
+{
+  "elements": {},
+  "imports": [
+    "package:flutter/material.dart",
+    "package:hdk_mobile_app/core/database/app_database.dart"
+  ]
+}

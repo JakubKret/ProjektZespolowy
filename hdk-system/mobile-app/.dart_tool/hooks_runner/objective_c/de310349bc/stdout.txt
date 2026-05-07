@@ -1,0 +1,58 @@
+Running `(cd /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/; TMPDIR=/var/folders/fl/wd8b7yws5wj8n81bjp3zxh_h0000gn/T/ PATH=/Library/TeX/texbin:/Users/daniel/.cargo/bin:/Users/daniel/.cursor/extensions/vadimcn.vscode-lldb-1.12.2/bin:/opt/homebrew/Cellar/dart/3.11.5/libexec/bin/:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pkg/env/active/bin:/opt/pmk/env/global/bin:/Library/TeX/texbin:/opt/homebrew/bin:/Users/daniel/flutter/bin:/opt/homebrew/Cellar/dart/3.11.5/libexec/bin/:/Users/daniel/.cursor/extensions/vadimcn.vscode-lldb-1.12.2/bin:/Users/daniel/.cargo/bin:/Users/daniel/.local/share/zinit/polaris/bin HOME=/Users/daniel /Users/daniel/flutter/bin/cache/dart-sdk/bin/dart --packages=/Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/package_config.json /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/objective_c/de310349bc/hook.dill --config=/Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/objective_c/de310349bc/input.json )`.
+INFO: 2026-05-07 12:52:46.584774: Running `/Library/Developer/CommandLineTools/usr/bin/clang --version`.
+
+INFO: 2026-05-07 12:52:46.595933: Running `/Library/Developer/CommandLineTools/usr/bin/clang --version`.
+
+INFO: 2026-05-07 12:52:46.604580: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/include/dart_api_dl.c -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-05-07 12:52:46.604837: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.c -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c.c.o
+
+INFO: 2026-05-07 12:52:46.604938: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/test/util.c -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/test/util.c.o
+
+INFO: 2026-05-07 12:52:46.605031: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/input_stream_adapter.m -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-05-07 12:52:46.605107: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.m -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c.m.o
+
+INFO: 2026-05-07 12:52:46.605177: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/observer.m -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/observer.m.o
+INFO: 2026-05-07 12:52:46.605250: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/ns_number.m -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/ns_number.m.o
+
+INFO: 2026-05-07 12:52:46.605634: Running: /Library/Developer/CommandLineTools/usr/bin/clang -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/daniel/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c_bindings_generated.m -fpic -I src -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-05-07 12:52:46.636031: 
+INFO: 2026-05-07 12:52:46.636041: 
+INFO: 2026-05-07 12:52:46.636049: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-05-07 12:52:46.650615: 
+INFO: 2026-05-07 12:52:46.650649: 
+INFO: 2026-05-07 12:52:46.650657: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/test/util.c.o
+
+INFO: 2026-05-07 12:52:46.652778: 
+INFO: 2026-05-07 12:52:46.652807: 
+INFO: 2026-05-07 12:52:46.652815: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/observer.m.o
+
+INFO: 2026-05-07 12:52:46.655709: 
+INFO: 2026-05-07 12:52:46.655733: 
+INFO: 2026-05-07 12:52:46.655740: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/protocol.m.o
+
+INFO: 2026-05-07 12:52:46.807161: 
+INFO: 2026-05-07 12:52:46.807195: 
+INFO: 2026-05-07 12:52:46.807203: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/ns_number.m.o
+
+INFO: 2026-05-07 12:52:46.809578: 
+INFO: 2026-05-07 12:52:46.809606: 
+INFO: 2026-05-07 12:52:46.809614: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c.m.o
+
+INFO: 2026-05-07 12:52:46.811292: 
+INFO: 2026-05-07 12:52:46.811310: 
+INFO: 2026-05-07 12:52:46.811316: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-05-07 12:52:46.822577: 
+INFO: 2026-05-07 12:52:46.822605: 
+INFO: 2026-05-07 12:52:46.822613: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-05-07 12:52:46.822868: Running: /Library/Developer/CommandLineTools/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -target arm64-apple-darwin -mmacos-version-min=13 /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/include/dart_api_dl.c.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c.c.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/test/util.c.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/input_stream_adapter.m.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c.m.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/observer.m.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/ns_number.m.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/protocol.m.o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/obj/src/objective_c_bindings_generated.m.o -o /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/objective_c.dylib
+
+INFO: 2026-05-07 12:52:46.847335: 
+INFO: 2026-05-07 12:52:46.847376: 
+INFO: 2026-05-07 12:52:46.847388: Generated /Users/daniel/Desktop/ProjektZespolowy/hdk-system/mobile-app/.dart_tool/hooks_runner/shared/objective_c/build/de310349bc/objective_c.dylib
+

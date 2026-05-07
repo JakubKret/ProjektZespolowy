@@ -1,0 +1,52 @@
+{
+  "elements": {
+    "MenstrualCyclesDao": {
+      "id": {
+        "library_uri": "package:hdk_mobile_app/core/database/daos/menstrual_cycles_dao.dart",
+        "name": "MenstrualCyclesDao"
+      },
+      "declaration": {
+        "source_uri": "package:hdk_mobile_app/core/database/daos/menstrual_cycles_dao.dart",
+        "offset": 276,
+        "name": "MenstrualCyclesDao"
+      },
+      "references": [
+        {
+          "library_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+          "name": "menstrual_cycles"
+        }
+      ],
+      "type": "dao",
+      "tables": [
+        {
+          "library_uri": "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart",
+          "name": "menstrual_cycles"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "dart_type": {
+        "elements": [
+          {
+            "lexeme": "MenstrualCyclesDao",
+            "import_uri": "package:hdk_mobile_app/core/database/daos/menstrual_cycles_dao.dart"
+          }
+        ]
+      },
+      "database": {
+        "elements": [
+          {
+            "lexeme": "AppDatabase",
+            "import_uri": "package:hdk_mobile_app/core/database/app_database.dart"
+          }
+        ]
+      }
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:hdk_mobile_app/core/database/app_database.dart",
+    "package:hdk_mobile_app/core/database/tables/menstrual_cycles.dart"
+  ]
+}
