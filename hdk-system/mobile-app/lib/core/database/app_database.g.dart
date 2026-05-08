@@ -5531,7 +5531,25 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $NotificationLogTableTable(this);
   late final $PitAnnualSummaryTableTable pitAnnualSummaryTable =
       $PitAnnualSummaryTableTable(this);
+  late final DonorProfileDao donorProfileDao = DonorProfileDao(
+    this as AppDatabase,
+  );
+  late final DonationsDao donationsDao = DonationsDao(this as AppDatabase);
   late final MenstrualCyclesDao menstrualCyclesDao = MenstrualCyclesDao(
+    this as AppDatabase,
+  );
+  late final MorphologyResultsDao morphologyResultsDao = MorphologyResultsDao(
+    this as AppDatabase,
+  );
+  late final BloodCentersDao bloodCentersDao = BloodCentersDao(
+    this as AppDatabase,
+  );
+  late final ZhdkBadgeDefinitionsDao zhdkBadgeDefinitionsDao =
+      ZhdkBadgeDefinitionsDao(this as AppDatabase);
+  late final DonorBadgesEarnedDao donorBadgesEarnedDao = DonorBadgesEarnedDao(
+    this as AppDatabase,
+  );
+  late final NotificationLogDao notificationLogDao = NotificationLogDao(
     this as AppDatabase,
   );
   late final PitAnnualSummaryDao pitAnnualSummaryDao = PitAnnualSummaryDao(

@@ -13,8 +13,15 @@ import 'tables/zhdk_badge_definitions_table.dart';
 import 'tables/donor_badges_earned_table.dart';
 import 'tables/notification_log_table.dart';
 import 'tables/pit_annual_summary_table.dart';
+import 'daos/blood_centers_dao.dart';
+import 'daos/donor_badges_earned_dao.dart';
+import 'daos/donor_profile_dao.dart';
+import 'daos/donations_dao.dart';
 import 'daos/menstrual_cycles_dao.dart';
+import 'daos/morphology_results_dao.dart';
+import 'daos/notification_log_dao.dart';
 import 'daos/pit_annual_summary_dao.dart';
+import 'daos/zhdk_badge_definitions_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -30,7 +37,17 @@ part 'app_database.g.dart';
     NotificationLogTable,
     PitAnnualSummaryTable,
   ],
-  daos: [MenstrualCyclesDao, PitAnnualSummaryDao],
+  daos: [
+    DonorProfileDao,
+    DonationsDao,
+    MenstrualCyclesDao,
+    MorphologyResultsDao,
+    BloodCentersDao,
+    ZhdkBadgeDefinitionsDao,
+    DonorBadgesEarnedDao,
+    NotificationLogDao,
+    PitAnnualSummaryDao,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _open());

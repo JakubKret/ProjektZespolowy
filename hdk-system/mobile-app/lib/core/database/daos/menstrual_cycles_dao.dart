@@ -27,9 +27,7 @@ class MenstrualCyclesDao extends DatabaseAccessor<AppDatabase>
       return cycleId;
     });
   }
-  Future<void> closeActiveCycle(
-    int donorProfileId, {
-    DateTime? endDate,
+  Future<void> closeActiveCycle( int donorProfileId, { DateTime? endDate,
     RecalculateCycleBlocker? recalculate,
   }) async {
     final resolvedEndDate = endDate ?? DateTime.now();

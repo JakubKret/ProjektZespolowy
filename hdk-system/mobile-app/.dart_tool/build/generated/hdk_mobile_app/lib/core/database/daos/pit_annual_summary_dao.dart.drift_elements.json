@@ -1,1 +1,0 @@
-{"valid_import":true,"imports":[{"uri":"package:drift/drift.dart","transitive":false},{"uri":"package:hdk_mobile_app/core/database/app_database.dart","transitive":false},{"uri":"package:hdk_mobile_app/core/database/tables/pit_annual_summary_table.dart","transitive":false}],"elements":[{"kind":"databaseAccessor","name":"PitAnnualSummaryDao","dart_name":"PitAnnualSummaryDao"}]}

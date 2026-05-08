@@ -3,11 +3,12 @@ import 'dart:math' as math;
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../tables/donations_table.dart';
 import '../tables/pit_annual_summary_table.dart';
 
 part 'pit_annual_summary_dao.g.dart';
 
-@DriftAccessor(tables: [PitAnnualSummaryTable])
+@DriftAccessor(tables: [DonationsTable, PitAnnualSummaryTable])
 class PitAnnualSummaryDao extends DatabaseAccessor<AppDatabase>
     with _$PitAnnualSummaryDaoMixin {
   PitAnnualSummaryDao(super.db);
@@ -54,7 +55,21 @@ class PitAnnualSummaryDao extends DatabaseAccessor<AppDatabase>
         lastCalculatedAt: Value(DateTime.now()),
       );
 
-      await into(pitAnnualSummaryTable).insertOnConflictUpdate(summary);
+      final existing =
+          await (select(pitAnnualSummaryTable)
+                ..where(
+                  (t) =>
+                      t.donorProfileId.equals(donorProfileId) &
+                      t.taxYear.equals(taxYear),
+                ))
+              .getSingleOrNull();
+
+      if (existing == null) {
+        await into(pitAnnualSummaryTable).insert(summary);
+      } else {
+        await (update(pitAnnualSummaryTable)..where((t) => t.id.equals(existing.id)))
+            .write(summary);
+      }
 
       return (select(pitAnnualSummaryTable)
             ..where(
