@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'add_donation_screen.dart';
+import 'menstrual_cycle_screen.dart';
 
 class DonorCardScreen extends StatelessWidget {
   // Przykładowe zmockowane dane - docelowo z backendu
@@ -40,7 +42,7 @@ class DonorCardScreen extends StatelessWidget {
               const Spacer(),
               _buildKarencjaInfo(theme),
               const SizedBox(height: 30),
-              _buildActionButtons(theme),
+              _buildActionButtons(context, theme),
             ],
           ),
         ),
@@ -165,13 +167,18 @@ class DonorCardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(ThemeData theme) {
+  Widget _buildActionButtons(BuildContext context, ThemeData theme) {
     return Row(
       children: [
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
-              // TODO: Nawigacja do formularza dodawania donacji
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddDonationScreen(),
+                ),
+              );
             },
             icon: const Icon(Icons.add),
             label: const Text('Dodaj wpis'),
@@ -183,6 +190,25 @@ class DonorCardScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0),
               ),
               elevation: 0,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MenstrualCycleScreen(),
+              ),
+            );
+          },
+          icon: const Icon(Icons.water_drop, color: Colors.pinkAccent),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.pink.shade50,
+            padding: const EdgeInsets.all(16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
             ),
           ),
         ),

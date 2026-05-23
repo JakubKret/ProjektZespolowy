@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/database/app_database.dart';
+import 'core/workflows/donor_workflow_service.dart';
+import 'screens/main_navigation_screen.dart';
+import 'screens/login_screen.dart';
+
+final databaseProvider = Provider<AppDatabase>((ref) {
+  return AppDatabase();
+});
+
+final donorWorkflowServiceProvider = Provider<DonorWorkflowService>((ref) {
+  final db = ref.watch(databaseProvider);
+  return DonorWorkflowService(db);
+});
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = AppDatabase();
-  runApp(HdkApp(database: database));
+
+  runApp(const ProviderScope(child: Krwiodawstwo()));
 }
 
-class HdkApp extends StatelessWidget {
-  const HdkApp({super.key, required this.database});
-  final AppDatabase database;
+class Krwiodawstwo extends StatelessWidget {
+  const Krwiodawstwo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HDK',
+      title: 'Krwiodawstwo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD32F2F)),
         useMaterial3: true,
       ),
-      home: const HomePage(),
-    );
-  }
-}
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('HDK')),
-      body: const Center(child: Text('Hello, donor!')),
+      home: const LoginScreen(),
     );
   }
 }
