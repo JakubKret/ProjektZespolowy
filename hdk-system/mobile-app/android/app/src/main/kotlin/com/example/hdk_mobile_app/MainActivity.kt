@@ -1,5 +1,6 @@
-package com.example.hdk_mobile_app
+package com.example.krwiodawstwo
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+class MainActivity: FlutterFragmentActivity() { 
+}
