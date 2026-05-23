@@ -9,6 +9,7 @@
       "dependencies": [
         "drift",
         "flutter",
+        "flutter_dotenv",
         "flutter_riverpod",
         "geolocator",
         "google_maps_flutter",
@@ -118,6 +119,13 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_dotenv",
+      "version": "6.0.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
