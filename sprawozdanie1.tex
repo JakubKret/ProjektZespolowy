@@ -2,6 +2,7 @@
 %  Dokumentacja Analityczno-Projektowa
 %  Mobilny System Wspomagania Honorowych Dawców Krwi
 % ============================================================
+% regex do cite: \[cite: \d+\]
 \documentclass[11pt, a4paper]{article}
 
 % ── Encoding & Language ──────────────────────────────────────
@@ -14,6 +15,8 @@
 \usepackage{microtype}
 \usepackage{setspace}
 \setstretch{1.15}
+\usepackage{pgfgantt}
+
 
 % ── Page Layout ──────────────────────────────────────────────
 \usepackage[
@@ -30,6 +33,14 @@
 \fancyhead[L]{\small\textit{Dokumentacja Analityczno-Projektowa}}
 \fancyhead[R]{\small\textit{System Krwiodawstwa }}
 \fancyfoot[C]{\small\thepage}
+\usepackage{tikz}
+
+% ── Definicje kolorów (też do preambuły): ───────────────────
+\definecolor{MatrixNavy}  {HTML}{00237A}
+\definecolor{MatrixGreen} {HTML}{388E3C}
+\definecolor{MatrixYellow}{HTML}{F9A825}
+\definecolor{MatrixRed}   {HTML}{C62828}
+
 
 % ── Section Styling ──────────────────────────────────────────
 \usepackage{titlesec}
@@ -54,7 +65,11 @@
 \usepackage{array}
 \renewcommand{\arraystretch}{1.35}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
-
+\newcommand{\rid}[2]{\textcolor{#1}{\textbf{#2}}}
+\definecolor{RiskLow}{HTML}{046307}
+\definecolor{RiskMedium}{HTML}{FFC107}
+\definecolor{RiskHigh}  {HTML}{FF7043}
+\definecolor{RiskCrit}  {HTML}{D32F2F}
 % ── Requirement Cards ────────────────────────────────────────
 \usepackage{mdframed}
 \usepackage{xparse}
@@ -92,10 +107,12 @@
 
 % ── Misc ─────────────────────────────────────────────────────
 \usepackage{parskip}
+\usepackage{amsmath}
 \setlength{\parskip}{5pt}
 \usepackage{graphicx}
 \usepackage{xspace}
-\usepackage[gray]{xcolor}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{colortbl}
 \usepackage{hyperref}
 \hypersetup{colorlinks=false, pdfborder={0 0 0}}
 \usepackage{caption}
@@ -132,8 +149,7 @@
 
   \begin{tabular}{rl}
     \toprule
-    \textbf{Status} & Projekt wstępny \\
-    \textbf{Data}   & 18.04.2026 \\
+    \textbf{Data}   & 18.05.2026 \\
     \textbf{Platforma} & Android (Flutter) \\
     \bottomrule
   \end{tabular}
@@ -393,7 +409,7 @@ kalendarzem cyklu menstruacyjnego.
 \subsection{Jądro Aplikacji (\textit{Must-Have})}
 
 \begin{itemize}
-  \item \textbf{Multiwymiarowe odliczanie do donacji:} Algorytmy obsługują różne przerwy —
+  \item \textbf{Różne wzorce odliczania do donacji:} Algorytmy obsługują różne przerwy —
         8~tygodni dla krwi pełnej, 4 lub 2~tygodnie dla płytek krwi oraz osocza,
         krzyżując interwały w zależności od donacji mieszanych i weryfikując z płcią
         użytkownika.
@@ -438,182 +454,460 @@ kalendarzem cyklu menstruacyjnego.
 \end{itemize}
 
 % ════════════════════════════════════════════════════════════
-\section{Specyfikacja Wymagań Funkcjonalnych (Wzorzec Volere)}
+\section{Specyfikacja Wymagań}
+
+\subsection{Wymagania funkcjonalne}
+
+% --- W_FUN_01 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_01}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 1
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} System musi poprawnie przeliczać wprowadzony składnik krwi (osocze, płytki) na objętość krwi pełnej według wskaźników Ministerstwa Zdrowia. \\
+  \textbf{Przesłanka:} Tylko krew pełna przelicza się w stosunku 1:1. Osocze (600ml = 200ml krwi pełnej). Niezbędne do poprawnego wyliczania litrażu na odznaki. \\
+  \textbf{Kryterium spełnienia:} Po wpisaniu donacji 600ml osocza, globalny licznik krwi pełnej w profilu dawcy rośnie o dokładnie 200ml (0.2L).
+\end{mdframed}
+
+% --- W_FUN_02 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_02}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 2
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Algorytm karencji musi uwzględniać płeć dawcy i roczne limity donacji. \\
+  \textbf{Przesłanka:} Zapobieganie niepotrzebnemu podejścia do centrum, gdy donacja i tak jest niemożliwa. \\
+  \textbf{Kryterium spełnienia:} Po wpisaniu 4 donacji krwi pełnej przez kobietę w danym roku, system blokuje wpisywanie kolejnych i podaje datę odblokowania za 365 dni od pierwszej donacji.
+\end{mdframed}
+
+% --- W_FUN_03 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_03}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 3
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja musi udostępniać kobietom opcję wpisania terminu menstruacji, co automatycznie nadpisuje bieżącą datę karencji (termin zakończenia fazy menstruacyjnej + 3 dni). \\
+  \textbf{Przesłanka:} Uwzględnienie wymagań kobiet-dawczyń, tak by brać pod uwagę możliwości krwiodawcze. \\
+  \textbf{Kryterium spełnienia:} Użytkowniczka zaznacza okres do 10.05. System przesuwa możliwą datę oddania na 14.05, pomimo że z dni standardowej karencji wypadał 08.05.
+\end{mdframed}
+
+% --- W_FUN_04 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_04}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 4
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} System musi generować raport ulgi podatkowej (PIT) w PLN dla zadanego roku kalendarzowego. \\
+  \textbf{Przesłanka:} Finansowa gratyfikacja to silny czynnik gamifikacyjny. \\
+  \textbf{Kryterium spełnienia:} Dla oddanych 1.8L w roku 2025, system mnoży wartość przez zdefiniowaną stałą (130 PLN) i zwraca wynik 234.00 PLN z notką prawną o limicie dochodu.
+\end{mdframed}
+
+% --- W_FUN_05 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_05}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 5
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja użyje modułu OCR (AI) do zeskanowania papierowych wyników badań wydawanych w stacji RCKiK i przetworzenia ich na historię zdrowia w aplikacji. \\
+  \textbf{Przesłanka:} Eliminacja konieczności przepisywania wyników przez użytkownika. \\
+  \textbf{Kryterium spełnienia:} System po wykonaniu zdjęcia wydruku parsuje tekst, identyfikuje tag \texttt{HGB} i \texttt{WBC}, pobiera wartości obok nich i zapisuje do historii wyników badań.
+\end{mdframed}
+
+% --- W_FUN_06 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_06}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 6
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja odbiera spersonalizowane powiadomienia Push z chmury Firebase o krytycznych niedoborach konkretnej grupy krwi. \\
+  \textbf{Przesłanka:} Budowanie aktywnego reagowania dawców na wezwania placówek, zwiększając skuteczność akcji ratunkowych. \\
+  \textbf{Kryterium spełnienia:} Użytkownik z grupą A Rh- otrzymuje alert "Potrzebna krew A Rh-", podczas gdy pozostali użytkownicy nie otrzymują takowych powiadomień.
+\end{mdframed}
+
+% --- W_FUN_07 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_FUN\_07}} \hfill \textbf{Typ:} 9. Wymagania funkcjonalne \hfill \textbf{PU:} 7
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja musi wyświetlać najbliższe centrum krwiodawstwa (RCKiK) lub mobilny punkt poboru w oparciu o aktualną lokalizację GPS użytkownika. \\
+  \textbf{Przesłanka:} Ułatwienie procesu znalezienia placówki, w szczególności dla nowych dawców oraz osób przebywających poza swoim stałym miejscem zamieszkania. \\
+  \textbf{Kryterium spełnienia:} Po otwarciu modułu mapy, system automatycznie pobiera pozycję użytkownika i wskazuje na ekranie znacznik najbliższego punktu oddawania krwi wraz z dystansem.
+\end{mdframed}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Wymagania niefunkcjonalne}
+% ────────────────────────────────────────────────────────────
+
+% --- W_NFUN_10 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_10}} \hfill \textbf{Typ:} 10. Wymagania Estetyczne
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Interfejs musi dominować w tonacjach medycznej bieli i czerwieni. \\
+  \textbf{Przesłanka:} Psychologiczne budowanie zaufania. Kolorystyka musi od razu kojarzyć się ze służbą zdrowia, Czerwonym Krzyżem i higieną. \\
+  \textbf{Kryterium spełnienia:} Wyniki ankiety UX na próbie 10 dawców wykażą min. 70\% pozytywnych skojarzeń z obszarem medycznym przy ocenie designu aplikacji.
+\end{mdframed}
+
+% --- W_NFUN_11 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_11}} \hfill \textbf{Typ:} 11. Ergonomia i Dostępność
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Wielkość czcionek w aplikacji musi dynamicznie reagować na ustawienia \textit{Accessibility} (ułatwień dostępu) w systemie Android. \\
+  \textbf{Przesłanka:} Najbardziej zasłużeni dawcy to najczęściej osoby 50+, co wymaga wsparcia dla osób niedowidzących (duże litery). \\
+  \textbf{Kryterium spełnienia:} Ustawienie fontu systemowego na "Ogromny" skaluje interfejs aplikacji bez "ucinania" tekstów i przycisków za ekran.
+\end{mdframed}
+
+% --- W_NFUN_12_01 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_12\_01}} \hfill \textbf{Typ:} 12. Wydajność
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Renderowanie mapy punktów pobrań (RCKiK) nie może zamrozić wątku UI aplikacji; konieczne jest grupowanie (klastrowanie) markerów na oddalonej mapie. \\
+  \textbf{Przesłanka:} Setki punktów narysowane na ekranie jednocześnie drastycznie obniżają liczbę klatek (FPS) w słabych smartfonach. \\
+  \textbf{Kryterium spełnienia:} Ekran przewija mapę Polski płynnie (min. 30 FPS) mając w tle załadowaną bazę placówek.
+\end{mdframed}
+
+% --- W_NFUN_12_02 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_12\_02}} \hfill \textbf{Typ:} 12. Bezpieczeństwo użycia
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Wymagane jest podwójne zatwierdzenie (prompt ostrzegawczy) przez użytkownika wyników wyciągniętych przez sztuczną inteligencję (OCR) ze zdjęcia. \\
+  \textbf{Przesłanka:} Ochrona zdrowia. Zapisanie do historii np. błędnie sczytanej niskiej hemoglobiny usypia czujność dawcy względem jego choroby. \\
+  \textbf{Kryterium spełnienia:} Po analizie OCR, na ekranie pojawia się czerwony monit: "Zweryfikuj te wartości z papierem. System AI może się mylić". Jest również opcja dodania danych ręcznie.
+\end{mdframed}
+
+% --- W_NFUN_13 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_13}} \hfill \textbf{Typ:} 13. Środowisko pracy
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja musi pozwalać na odczyt i wpisanie nowej donacji oraz przeliczenie nowej karencji w całkowitym trybie offline. \\
+  \textbf{Przesłanka:} Nie zawsze ma się dostęp do internetu, a może być chęć wpisania danych na bieżąco, by później nie zapomnieć. \\
+  \textbf{Kryterium spełnienia:} Wyłączenie Wi-Fi i transferu danych pozwala na pełne uzupełnienie donacji.
+\end{mdframed}
+
+% --- W_NFUN_14 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_14}} \hfill \textbf{Typ:} 14. Wymagania dotyczące utrzymania i wsparcia
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Aplikacja będzie zaprojektowana w oparciu o czystą i stabilną architekturę (framework Flutter), dzięki czemu będzie na tyle prosta, że kolejne aktualizacje systemu operacyjnego Android nie będą wpływały na jej poprawne działanie. \\
+  \textbf{Przesłanka:} Zminimalizowanie kosztów utrzymania po zakończeniu głównej fazy projektu. \\
+  \textbf{Kryterium spełnienia:} Kod aplikacji kompiluje się i uruchamia poprawnie, bez krytycznych błędów blokujących (crashów), na co najmniej dwóch kolejnych, dużych aktualizacjach systemu Android.
+\end{mdframed}
+
+% --- W_NFUN_15 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_15}} \hfill \textbf{Typ:} 15. Wymagania Bezpieczeństwa
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} Dostęp do aplikacji musi wymagać hasła i/lub odblokowania biometrycznego (odcisk palca), a baza wyników musi być lokalnie przechowywana. \\
+  \textbf{Przesłanka:} Kradzież lub zgubienie odblokowanego telefonu nie może dawać złodziejowi dostępu do pełnej, intymnej historii chorób medycznych ofiary. \\
+  \textbf{Kryterium spełnienia:} Uruchomienie aplikacji wywołuje systemowy prompt Android Biometric API. Anulowanie odrzuca do ekranu startowego.
+\end{mdframed}
+
+% --- W_NFUN_17 ---
+\begin{mdframed}[style=reqheader]
+  \textbf{Nr: \req{W\_NFUN\_17}} \hfill \textbf{Typ:} 17. Wymagania Prawne
+\end{mdframed}
+\begin{mdframed}[style=reqcard]
+  \textbf{Opis:} System musi wymuszać na nowym użytkowniku akceptację klauzuli, że oprogramowanie nie stanowi diagnozy medycznej. \\
+  \textbf{Przesłanka:} Ochrona twórców przed odpowiedzialnością karną z tytułu ew. błędów obliczeniowych, gdy dawca np. zasłabnie. \\
+  \textbf{Kryterium spełnienia:} Podczas ekranu powitalnego należy "zaptaszkować" checkbox z \textit{Disclaimerem} medycznym. Bez tego proces rejestracji nie ruszy.
+\end{mdframed}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Zagadnienia i problemy projektowe}
+% ────────────────────────────────────────────────────────────
+
+\subsubsection{18. Problemy otwarte}
+Fundamentalnym nierozwiązanym problemem jest brak autoryzacji oddawanej krwi ze strony państwa. Przez to aplikacja bazuje na "słowie honoru", co potencjalnie ułatwia oszustwa i nielegalne zawyżanie wyników celem przechwalania się fałszywym progiem ZHDK.
+
+\subsubsection{19. Rozwiązania "z półki" (Off-the-shelf)}
+Zamiast tworzyć i trenować od podstaw modele sieci neuronowych (AI) do detekcji wyników badań (co pochłonęłoby miesiące i ogromne koszty), zespół wykorzysta sprawdzoną rynkowo i darmową bibliotekę \textbf{Google ML Kit Text Recognition}. Moduły backendowe będą działać w usłudze chmurowej \textbf{Firebase} (BaaS).
+
+\subsubsection{20. Nowe problemy (Wpływ na otoczenie)}
+Wdrożenie systemów motywacyjnych opartych o grę (tzw. "Gamifikacja" – wirtualne krople i poziomy) może zostać źle odebrane przez niektórych dawców, dla których krwiodawstwo to wyłącznie "służba", a nie korzyści.
+
+\subsubsection{21. Zadania do realizacji}
+W ramach tworzenia środowiska konieczne jest zgromadzenie i "zmapowanie" struktury bazy koordynatów GPS placówek Regionalnych Centrów Krwiodawstwa z całego kraju do formatu mapy, co zrealizowane zostanie przy użyciu integracji z API \textbf{Google Maps}.
+
+\subsubsection{22. Migracja na nowy produkt}
+Nie da się zautomatyzować migracji ze starszych aplikacji np. "Krewki Dawca", ponieważ każda operuje zamkniętym formatem danych bez opcji eksportu. Nowi użytkownicy będą musieli ręcznie wbić łączny historyczny litraż, a aplikacja powinna oferować funkcję "Podaj zsumowane dotychczasowe litry na start".
+
+\subsubsection{24. Koszty}
+Tworzenie we własnym zakresie – brak kosztów pieniężnych wynagrodzeń. Koszty infrastruktury: 0 PLN w fazie testowej dzięki pakietowi Spark w Firebase Cloud (baza, hosting, notyfikacje). Ewentualne koszty mogą pojawić się przy zakupie certyfikatu deweloperskiego na Google Play.
+
+\subsubsection{25. Dokumentacja użytkownika}
+Projekt będzie zawierał wewnętrzną instrukcję obsługi.
+% ════════════════════════════════════════════════════════════
+\section{Analiza Ryzyka i Bezpieczeństwo Systemu}
 % ════════════════════════════════════════════════════════════
 
-Poniżej przedstawiono karty wymagań sporządzone zgodnie z notacją Volere.
+Wdrażanie rozwiązań z zakresu cyfrowego zdrowia (\textit{Digital Health}) wiąże się z ogromną odpowiedzialnością za dane oraz zdrowie fizyczne użytkowników. Poniżej przedstawiamy szczegółową analizę zagrożeń dla systemu \sys wraz z oceną ich prawdopodobieństwa, kosztów i potencjalnych konsekwencji, a także zaplanowanymi działaniami zapobiegawczymi i naprawczymi.
 
-% ── Requirement Card W_FUN_01 ────────────────────────────────
-\begin{mdframed}[style=reqheader]
-  \textbf{Karta:\ \req{W\_FUN\_01}} \hfill
-  \textit{Obliczenia Karencji Donacyjnych}
-\end{mdframed}
-\begin{mdframed}[style=reqcard]
-  \begin{tabbing}
-    \hspace{3.2cm}\=\kill
-    \textbf{Typ}\> Jądro Aplikacji (Wymaganie Funkcjonalne) \\[4pt]
-    \textbf{Opis}\> System musi obliczyć i aktywnie odliczać dni do momentu, w~którym \\
-                \> dawca prawnie i medycznie może powrócić do RCKiK. \\[4pt]
-    \textbf{Przesłanka}\> Okresy są silnie uwarunkowane prawnie. Zależnie od zadeklarowanej \\
-                       \> płci oraz ostatniego składnika donacji stosuje się inną formułę \\
-                       \> upływu czasu (od 48~godzin do 8~tygodni). \\[4pt]
-    \textbf{Kryterium}\> Tester, definiując profil jako ,,Kobieta'', rejestruje donację krwi \\
-    \textbf{spełnienia}\> pełnej w dniu 01.03.2026. System musi wyświetlić datę \\
-                       \> odblokowania na \textbf{26.04.2026} (dokładnie 8~tygodni przerwy) \\
-                       \> i uniemożliwić jej wprowadzenie wcześniejszej donacji krwi pełnej. \\
-                       \> Licznik musi zablokować donacje krwi pełnej na 12~miesięcy po \\
-                       \> odnotowaniu 4.~donacji w danym roku kalendarzowym.
-  \end{tabbing}
-\end{mdframed}
+% ────────────────────────────────────────────────────────────
+\subsection{Macierz Ryzyka}
+% ────────────────────────────────────────────────────────────
 
-% ── Requirement Card W_FUN_02 ────────────────────────────────
-\begin{mdframed}[style=reqheader]
-  \textbf{Karta:\ \req{W\_FUN\_02}} \hfill
-  \textit{Integracja z Cyklem Menstruacyjnym i Blokady Anemiczne}
-\end{mdframed}
-\begin{mdframed}[style=reqcard]
-  \begin{tabbing}
-    \hspace{3.2cm}\=\kill
-    \textbf{Typ}\> Opcjonalne (Wymaganie Funkcjonalne / Architektura Zdrowotna) \\[4pt]
-    \textbf{Opis}\> Kobiety-dawczynie muszą posiadać mechanizm wprowadzania informacji \\
-                \> o wystąpieniu i czasie trwania cyklu miesiączkowego, celem ingerencji \\
-                \> w globalny kalendarz odliczający karencję. \\[4pt]
-    \textbf{Przesłanka}\> Oddawanie krwi podczas lub krótko po krwawieniu grozi ostrą \\
-                       \> niedokrwistością i skutkuje dyskwalifikacją przez personel lekarski. \\
-                       \> System bez tej funkcjonalności wysyłałby zgubne powiadomienia, \\
-                       \> zachęcając do donacji w najgorszym fizjologicznym momencie. \\[4pt]
-    \textbf{Kryterium}\> Użytkowniczka zaznacza okres menstruacji na dni 10.05.2026–15.05.2026. \\
-    \textbf{spełnienia}\> Jeśli zwykłe wyliczenie karencji pozwalało na powrót 12.05.2026, \\
-                       \> algorytm automatycznie nakłada barierę, nadpisując termin donacji na \\
-                       \> \texttt{[Koniec\_Miesiączki] + 3 dni\_regeneracji}, \\
-                       \> odblokowując system dopiero \textbf{19.05.2026}, uciszając jednocześnie \\
-                       \> wszelkie notyfikacje Push do tego czasu.
-  \end{tabbing}
-\end{mdframed}
-
-% ── Requirement Card W_FUN_03 ────────────────────────────────
-\begin{mdframed}[style=reqheader]
-  \textbf{Karta:\ \req{W\_FUN\_03}} \hfill
-  \textit{Obliczanie Ulgi Podatkowej (Moduł PIT)}
-\end{mdframed}
-\begin{mdframed}[style=reqcard]
-  \begin{tabbing}
-    \hspace{3.2cm}\=\kill
-    \textbf{Typ}\> Warto Wprowadzić (Wymaganie Funkcjonalne / Biznesowe) \\[4pt]
-    \textbf{Opis}\> Aplikacja musi podsumować sumę donacji z danego roku podatkowego \\
-                \> i przetworzyć je na wartość ulgi wyrażoną w PLN, z uwzględnieniem \\
-                \> algorytmicznych limitów. \\[4pt]
-    \textbf{Przesłanka}\> Dawcy uzyskujący dochody opodatkowane (PIT-37, PIT-36, PIT-28) \\
-                       \> często nie wiedzą jak poprawnie skalkulować ulgę w załączniku PIT/O. \\
-                       \> Realny zastrzyk finansowy jest obok satysfakcji najsilniejszym \\
-                       \> zjawiskiem gamifikacyjnym i motywacyjnym. \\[4pt]
-    \textbf{Kryterium}\> Dla donacji zgromadzonych w roku 2025 i 2026, aplikacja przemnaża \\
-    \textbf{spełnienia}\> wpisane przez użytkownika litry (np. 1,8\,L) przez ustawową stawkę \\
-                       \> zdefiniowaną jako zmienna systemowa: \textbf{130\,PLN/litr}. \\
-                       \> Wyświetlony wynik \textbf{234,00\,PLN} jest opatrzony formułką \\
-                       \> przypominającą, że ostateczna odliczona wartość w~deklaracji nie \\
-                       \> może przekroczyć 6\% rocznego dochodu/przychodu dawcy.
-  \end{tabbing}
-\end{mdframed}
-
-% ── Requirement Card W_FUN_04 ────────────────────────────────
-\begin{mdframed}[style=reqheader]
-  \textbf{Karta:\ \req{W\_FUN\_04}} \hfill
-  \textit{Ścieżka Gamifikacji, Odznaki i Przywileje ZHDK}
-\end{mdframed}
-\begin{mdframed}[style=reqcard]
-  \begin{tabbing}
-    \hspace{3.2cm}\=\kill
-    \textbf{Typ}\> Warto Wprowadzić (Wymaganie Funkcjonalne / Systemy Lojalnościowe) \\[4pt]
-    \textbf{Opis}\> Po każdej donacji system musi operować graficznymi paskami postępu \\
-                \> wypełniającymi się aż do uzyskania kolejnego ustawowego progu ZHDK. \\[4pt]
-    \textbf{Przesłanka}\> Dawcy, znając konkretny benefit powiązany z progiem \\
-                       \> (np. 18\,L u mężczyzny na darmową komunikację miejską), \\
-                       \> wykazują silną skłonność do skrócenia przerw między wizytami \\
-                       \> w RCKiK. \\[4pt]
-    \textbf{Kryterium}\> Pasek postępu dla mężczyzny z historią 11,0\,L powinien wskazywać \\
-    \textbf{spełnienia}\> stan osiągnięty jako \textbf{Brązowa Odznaka (6\,L)} i wizualizować \\
-                       \> brakujący 1,0\,L do \textbf{Srebrnej Odznaki (12\,L)}. \\
-                       \> Po naciśnięciu wskaźnika poziomu ,,Srebro'', na ekranie powinna \\
-                       \> ukazać się lista przywilejów (obsługa bez kolejki w aptekach, \\
-                       \> darmowe leki dla ZHDK według uprawnień ,,ZK'').
-  \end{tabbing}
-\end{mdframed}
-
-% ── Requirement Card W_FUN_05 ────────────────────────────────
-\begin{mdframed}[style=reqheader]
-  \textbf{Karta:\ \req{W\_FUN\_05}} \hfill
-  \textit{OCR i Cyfrowe Archiwum Morfologiczne}
-\end{mdframed}
-\begin{mdframed}[style=reqcard]
-  \begin{tabbing}
-    \hspace{3.2cm}\=\kill
-    \textbf{Typ}\> Opcjonalne (Wymaganie Funkcjonalne / Integracja Modułów Zewnętrznych AI) \\[4pt]
-    \textbf{Opis}\> Użytkownik wykorzystuje aparat systemowy z poziomu aplikacji \\
-                \> w celu skanowania obrazu fizycznego wydruku badań laboratoryjnych \\
-                \> uzyskanych w RCKiK przed donacją, w celu zasilenia bazy trendów \\
-                \> zdrowotnych. \\[4pt]
-    \textbf{Przesłanka}\> OCR w medycynie eliminuje konieczność manualnego wpisywania \\
-                       \> dziesiątek wskaźników przez pacjenta, minimalizując błędy ludzkie. \\
-                       \> Krwiodawcy traktują regularne oddawanie krwi jako formę darmowych, \\
-                       \> cyklicznych badań profilaktycznych. \\[4pt]
-    \textbf{Kryterium}\> Mechanizm OCR parsując zrobione w dobrym oświetleniu zdjęcie formatu \\
-    \textbf{spełnienia}\> A4, przy użyciu wyrażeń regularnych (Regex), musi rozpoznać tag \\
-                       \> \texttt{HGB} (Hemoglobina) i pomyślnie zlokalizować sąsiadującą \\
-                       \> zmiennoprzecinkową wartość cyfrową (np. \texttt{14.2}), po czym \\
-                       \> zaproponować użytkownikowi naniesienie jej jako nowego punktu na \\
-                       \> osi czasu wykresu morfologicznego w zaledwie 3~kliknięciach.
-  \end{tabbing}
-\end{mdframed}
-
-% ════════════════════════════════════════════════════════════
-\section{Wymagania Niefunkcjonalne i Stos Technologiczny}
-% ════════════════════════════════════════════════════════════
-
-\subsection{Wymagania dotyczące używalności i estetyki}
-
+\noindent Każde ryzyko oceniono według trzech wymiarów:
 \begin{itemize}
-  \item \textbf{Wizualna tożsamość:} Interfejs musi budzić zaufanie, w tonacjach bieli
-        i czerwieni (konotacje medyczne, zbliżone do UI Red Cross i Moja Krew).
-        Centralny, dominujący na ekranie licznik litrów oraz odliczanie do nowej donacji
-        muszą być zrealizowane czytelnymi wskaźnikami.
-
-  \item \textbf{Ergonomia dla seniorów ZHDK:} Z uwagi na starzejącą się pulę
-        długoletnich dawców (Zasłużonych dla Zdrowia Narodu, powyżej 20~litrów krwi),
-        czcionki muszą ulegać dynamicznemu skalowaniu w odpowiedzi na systemowe
-        ustawienia ułatwień dostępu na Android (Accessibility standards).
-
-  \item \textbf{Nawigacja Map:} Przeglądanie akcji lokalnych na mapie nie może być
-        blokowane powolnym wczytywaniem bazy danych; należy wdrożyć clusterowanie
-        znaczników geolokalizacyjnych stacji krwiodawstwa w przypadku oddalenia
-        obrazu (\textit{zoom out}).
+  \item \textbf{Prawdopodobieństwo (P):} 1 — bardzo niskie, 2 — niskie, 3 — średnie, 4 — wysokie, 5 — bardzo wysokie.
+  \item \textbf{Wpływ (W):} 1 — pomijalny, 2 — minimalny, 3 — umiarkowany, 4 — poważny, 5 — krytyczny.
+  \item \textbf{Poziom ryzyka (R):} $R = P \times W$; wynik $\geq 12$ klasyfikowany jako ryzyko \textbf{krytyczne}.
 \end{itemize}
 
-\subsection{Architektura Wykonawcza i Stos Technologiczny}
-
 \begin{center}
-\begin{tabularx}{\linewidth}{L{3.5cm} X}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\linewidth}{L{0.4cm} L{3.2cm} X c c c}
   \toprule
-  \textbf{Warstwa} & \textbf{Technologia i uzasadnienie} \\
+  \textbf{ID} & \textbf{Ryzyko} & \textbf{Potencjalne konsekwencje} & \textbf{P} & \textbf{W} & \textbf{R} \\
   \midrule
-  Frontend mobilny
-    & \textbf{Flutter} (cross-platform) — generowanie jednoścież kowego kodu
-      na platformę Android. Umożliwia implementację UI/UX z natywną
-      wydajnością. \\
+  \rid{RiskHigh}{R1}
+
+    & Błąd logiki karencji (zła data blokady donacji)
+    & Dawca przychodzi do RCKiK i zostaje odrzucony — strata czasu, zniechęcenie do aplikacji, utrata zaufania. W skrajnym wypadku: zbyt wczesna donacja przegapiona przez RCKiK.
+    & 2 & 5 &  \rid{RiskHigh}{10} \\
   \addlinespace
-  AI / OCR
-    & \textbf{Google ML Kit} (Android) — bezpłatne, działające offline
-      procesowanie bloków tekstu z fotografii. Mityguje obciążenie serwera
-      chmurowego kosztownymi wyliczeniami obrazu. \\
+  \rid{RiskCrit}{R2}
+    & Błąd OCR — nieprawidłowy odczyt wyników badań
+    & Fałszywy obraz stanu zdrowia (np.\ hemoglobina 10,2 odczytana jako 18,2). Uśpienie czujności dawcy, pominięcie rzeczywistej anemii.
+    & 4 & 4 & \ \rid{RiskCrit}{16} \\
   \addlinespace
-  Backend / Powiadomienia
-    & \textbf{Firebase BaaS} — szybkie wdrożenie usług Cloud Messaging
-      (wysyłanie powiadomień Push o brakach krwi z centrali) oraz
-      logowania użytkowników. \\
+ \rid{RiskHigh}{R3}
+    & Wyciek danych medycznych (atak na infrastrukturę)
+    & Ujawnienie pełnych profili zdrowotnych: grupy krwi, historii chorób, wyników morfologii. Ryzyko szantażu, handlu danymi, naruszenia RODO z konsekwencjami prawnymi dla twórców.
+    & 2 & 5 & \rid{RiskHigh}{10} \\
+  \addlinespace
+  \rid{RiskMedium}{R4}
+
+    & Kradzież / zgubienie odblokowanego telefonu
+    & Osoba trzecia uzyskuje pełny wgląd w archiwum medyczne dawcy i możliwość manipulacji danymi (fałszywe donacje, edycja wyników).
+    & 2 & 4 & \rid{RiskMedium}{8} \\
+  \addlinespace
+  \rid{RiskCrit}{R5}
+    & Utrata ciągłości danych
+    & Bezpowrotna utrata historii donacji i wyników badań. Brak możliwości wygenerowania zestawienia PIT. Konieczność ręcznego odtworzenia danych przez użytkownika.
+    & 3 & 4 & \rid{RiskCrit}{12} \\
+  \addlinespace
+  \rid{RiskCrit}{R6}
+    & Fałszowanie historii donacji przez użytkownika
+    & Sztuczne zawyżanie licznika litrów celem wyłudzenia przywilejów ZHDK (zniżki, leki). Błędne wyliczenia ulgi PIT i nieuprawnione odliczenia przed US.
+    & 4 & 5 & \rid{RiskCrit}{20} \\
+  \addlinespace
+  \rid{RiskLow}{R7}
+
+    & Niestabilność usług zewnętrznych (Firebase, Google Maps API)
+    & Brak powiadomień Push o zapotrzebowaniu na krew, niedostępność mapy centrów krwiodawstwa, niemożność logowania.
+    & 2 & 3 & \rid{RiskLow}{6} \\
+  \addlinespace
+  \rid{RiskLow}{R8}
+
+    & Negatywny odbiór mechanizmów grywalizacji
+    & Część dawców może poczuć się urażona „zabawowym" podejściem do krwiodawstwa — odpływ użytkowników, negatywne recenzje.
+    & 3 & 2 & \rid{RiskLow}{6} \\
+  \addlinespace
+  
   \bottomrule
 \end{tabularx}
 \end{center}
+% ── Graf macierzy ryzyka — wklej w dokumencie: ──────────────
+\begin{center}
+\begin{tikzpicture}[
+  font=\small\sffamily,
+  cell/.style={minimum width=3.8cm, minimum height=2.4cm, draw=white, line width=1.2pt},
+  rlabel/.style={draw=white, fill=white, rounded corners=2pt,
+                 inner sep=3pt, font=\footnotesize\bfseries\sffamily},
+]
 
+% ── Komórki siatki (kolumna × wiersz) ───────────────────────
+% Kolumna 1 = Niskie P, Kolumna 2 = Średnie P, Kolumna 3 = Wysokie P
+% Wiersz 1  = Niskie W, Wiersz 2  = Średnie W, Wiersz 3  = Wysokie W
+
+\fill[MatrixGreen]  (0,0)   rectangle (3.8,2.4);   % N×N
+\fill[MatrixGreen]  (3.8,0) rectangle (7.6,2.4);   % S×N
+\fill[MatrixYellow] (7.6,0) rectangle (11.4,2.4);  % W×N
+
+\fill[MatrixGreen]  (0,2.4)   rectangle (3.8,4.8); % N×S
+\fill[MatrixYellow] (3.8,2.4) rectangle (7.6,4.8); % S×S
+\fill[MatrixRed]    (7.6,2.4) rectangle (11.4,4.8);% W×S
+
+\fill[MatrixYellow] (0,4.8)   rectangle (3.8,7.2); % N×W
+\fill[MatrixRed]    (3.8,4.8) rectangle (7.6,7.2); % S×W
+\fill[MatrixRed]    (7.6,4.8) rectangle (11.4,7.2);% W×W
+
+% ── Linie siatki ────────────────────────────────────────────
+\draw[white, line width=1.5pt]
+  (0,0) rectangle (11.4,7.2)
+  (3.8,0) -- (3.8,7.2)
+  (7.6,0) -- (7.6,7.2)
+  (0,2.4) -- (11.4,2.4)
+  (0,4.8) -- (11.4,4.8);
+
+% ── Etykiety osi X (Prawdopodobieństwo) ─────────────────────
+\fill[MatrixNavy] (0,-1.1) rectangle (11.4,0);
+\node[text=white, font=\small\bfseries\sffamily] at (1.9,-0.55)  {Niskie};
+\node[text=white, font=\small\bfseries\sffamily] at (5.7,-0.55)  {Średnie};
+\node[text=white, font=\small\bfseries\sffamily] at (9.5,-0.55)  {Wysokie};
+\node[text=white, font=\normalsize\bfseries\sffamily] at (5.7,-1.55) {\textbf{Prawdopodobieństwo}};
+
+% ── Etykiety osi Y (Wplyw) ─────────────────────────────
+\fill[MatrixNavy] (-1.5,0) rectangle (0,7.2);
+\node[text=white, font=\small\bfseries\sffamily, rotate=90] at (-0.75,1.2) {Niski};
+\node[text=white, font=\small\bfseries\sffamily, rotate=90] at (-0.75,3.6) {Średni};
+\node[text=white, font=\small\bfseries\sffamily, rotate=90] at (-0.75,6.0) {Wysoki};
+\node[text=white, font=\normalsize\bfseries\sffamily, rotate=90] at (-1.25,3.6) {\textbf{Wpływ}};
+
+% ── Bloczki ryzyk ────────────────────────────────────────────
+% Pozycja: środek komórki (col_start + offset, row_start + offset)
+% Każda komórka 3.8 × 2.4; środek kolumn: 1.9 / 5.7 / 9.5
+%                            środek wierszy: 1.2 / 3.6 / 6.0
+
+% R7 (P=2,W=3 → Niskie×Średnie): zielona N×S
+\node[rlabel, fill=MatrixGreen!30] at (1.2, 3.6) {R7};
+
+% R8 (P=3,W=2 → Średnie×Niskie): zielona S×N
+\node[rlabel, fill=MatrixGreen!30] at (5.7, 1.2) {R8};
+
+% R3 (P=2,W=5 → Niskie×Wysokie): żółta N×W
+\node[rlabel, fill=MatrixYellow!60] at (2.5, 6.0) {R3};
+
+% R1 (P=2,W=5 → Średnie×Wysokie): czerwona S×W
+\node[rlabel, fill=MatrixYellow!40]    at (2.5, 5.5) {R1};
+
+
+% R2 (P=4,W=4 → Wysokie×Średnie/Wysokie): czerwona W×S–W
+\node[rlabel, fill=MatrixRed!40]    at (9.5, 4.0) {R2};
+
+% R4 (P=2,W=4 → Średnie×Wysokie): czerwona S×W
+\node[rlabel, fill=MatrixYellow!40]    at (6.6, 4.0) {R4};
+
+% R5 (P=3,W=4 → Średnie×Wysokie): czerwona S×W
+\node[rlabel, fill=MatrixRed!40]    at (5.7, 5.0) {R5};
+
+% R6 (P=4,W=3 → Wysokie×Średnie): czerwona W×S
+\node[rlabel, fill=MatrixRed!40]    at (9.5, 5.5) {R6};
+
+\end{tikzpicture}
+\end{center}
+% ────────────────────────────────────────────────────────────
+\subsection{Zagrożenia medyczne i fizjologiczne (Bezpieczeństwo Dawcy)}
+% ────────────────────────────────────────────────────────────
+
+Najwyższym priorytetem aplikacji jest ochrona zdrowia dawcy. Błędy w logice aplikacji lub nieodpowiedzialne zachowania użytkowników mogą prowadzić do realnego zagrożenia zdrowia.
+
+\begin{description}[leftmargin=0pt]
+    \item[\term{Zbyt wczesna donacja — ryzyko R1 (P=2, W=5):}]
+    Istnieje ryzyko, że użytkownik zignoruje ostrzeżenia systemu lub celowo poda fałszywą datę ostatniej wizyty. Błąd po stronie algorytmu karencji, wynikający np.\ z przeoczenia mieszanej historii donacji (krew pełna + osocze), może wyliczyć datę wcześniejszą niż faktycznie dopuszczalna. Na szczęście stacja RCKiK weryfikuje kwalifikację na miejscu — w najgorszym wypadku dawca traci czas. \\
+    \textbf{Działania zapobiegawcze:} Pokrycie algorytmów karencji automatycznymi testami jednostkowymi (co najmniej 20 scenariuszy granicznych). Wyraźne ostrzeżenie wizualne na interfejsie o nieoficjalnym charakterze wyliczeń. \\
+    \textbf{Działania naprawcze:} W przypadku wykrycia błędu logicznego — natychmiastowe wydanie poprawki (hotfix) bez czekania na cykl release'owy; powiadomienie Push do wszystkich użytkowników.
+
+    \item[\term{Błędy modułu OCR przy odczycie wyników — ryzyko R2 (P=4, W=4):}]
+    Algorytmy rozpoznawania tekstu mogą błędnie zinterpretować wartości na papierowym wyniku badania. Jeśli użytkownik bezrefleksyjnie zaakceptuje takie dane, system wygeneruje fałszywy obraz stanu zdrowia. \\
+    \textbf{Działania zapobiegawcze:} Wymuszenie podwójnej weryfikacji — każda wartość odczytana przez OCR musi zostać ręcznie potwierdzona przez użytkownika (wymaganie \req{W\_NFUN\_12\_02}). Czerwony monit ostrzegawczy po każdym skanowaniu. \\
+    \textbf{Działania naprawcze:} Możliwość ręcznej edycji każdego odczytanego pola; przechowywanie oryginalnego zdjęcia obok wpisanych wartości celem ewentualnej ponownej weryfikacji.
+
+    \item[\term{Zatajenie cyklu menstruacyjnego:}]
+    Opory przed wprowadzaniem danych o menstruacji mogą skutkować brakiem aktywacji inteligentnej blokady karencyjnej, prowadząc do wizyty zakończonej odrzuceniem medycznym. \\
+    \textbf{Działania zapobiegawcze:} Moduł jest w pełni opcjonalny i wyraźnie oznaczony jako dobrowolny. Dane przechowywane wyłącznie lokalnie na urządzeniu — nigdy nie trafiają na serwer.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Bezpieczeństwo danych, kopie zapasowe i wyciek informacji}
+% ────────────────────────────────────────────────────────────
+
+Aplikacja agreguje wysoce wrażliwe dane: grupę krwi, historię wizyt medycznych oraz wyniki badań morfologicznych.
+
+\subsubsection*{Strategia przechowywania danych — decyzja architektoniczna}
+
+Zespół podjął świadomą decyzję projektową: \textbf{dane medyczne użytkownika (wyniki badań, historia donacji, dane o cyklu) przechowywane są wyłącznie lokalnie na urządzeniu}. Oznacza to, że:
+
+\begin{itemize}
+  \item Dane nigdy nie opuszczają telefonu użytkownika w czytelnej formie.
+  \item Nawet potencjalny wyciek z infrastruktury chmurowej (Firebase) nie ujawni historii medycznej.
+  \item Lokalność danych jest silniejszą gwarancją prywatności niż jakiekolwiek techniki szyfrowania po stronie serwera.
+\end{itemize}
+
+Rozwiązanie to ma jednak jedną istotną wadę: brak automatycznych kopii zapasowych.
+
+\subsubsection*{Utrata ciągłości danych — ryzyko R5 (P=3, W=4)}
+
+Awaria urządzenia, reset fabryczny lub przypadkowe odinstalowanie aplikacji mogą doprowadzić do bezpowrotnej utraty całej historii donacji i wyników badań. Dla użytkownika oznacza to:
+
+\begin{itemize}
+  \item Niemożność wygenerowania zestawienia PIT pod koniec roku podatkowego.
+  \item Utratę postępów w programie odznak ZHDK.
+  \item Konieczność ręcznego odtworzenia danych historycznych.
+\end{itemize}
+
+\textbf{Działania zapobiegawcze i planowane mechanizmy backupu:}
+\begin{itemize}
+  \item \textbf{Eksport ręczny:} Użytkownik może w każdej chwili wyeksportować zaszyfrowany plik kopii zapasowej (format JSON lub binarny) i zapisać go lokalnie (np.\ w Google Drive lub pamięci zewnętrznej) — bez udziału serwerów aplikacji.
+  \item \textbf{Opcjonalny backup w chmurze (opt-in):} Jeśli użytkownik \emph{świadomie} włączy tę opcję, dane synchronizowane są z kontem użytkownika na serwerze Firebase. \textbf{Warunek bezwzględny: dane muszą być szyfrowane end-to-end kluczem pochodnym od hasła użytkownika przed opuszczeniem urządzenia.} Serwer przechowuje wyłącznie zaszyfrowany blob — nawet administratorzy systemu nie mają dostępu do treści. Klucz nigdy nie jest transmitowany.
+  \item \textbf{Przypomnienia o backupie:} System wyświetla cykliczne przypomnienie o konieczności wykonania eksportu danych (co 90 dni lub po każdej dużej aktualizacji aplikacji).
+\end{itemize}
+
+\subsubsection*{Wyciek danych medycznych — ryzyko R3 (P=2, W=5)}
+
+\begin{description}[leftmargin=0pt]
+    \item[\term{Atak na infrastrukturę chmurową:}]
+    Baza danych Firebase przechowuje jedynie: identyfikatory kont, grupę krwi (wybraną przez użytkownika) oraz tokeny do powiadomień Push. Wrażliwe dane historyczne nie trafiają na serwer (patrz decyzja powyżej). Nawet skuteczny atak hakerski nie ujawni historii chorób użytkowników. \\
+    \textbf{Działania zapobiegawcze:} Zastosowanie reguł bezpieczeństwa Firebase (Firestore Security Rules) ograniczających dostęp do danych wyłącznie do właściciela konta. Regularne audyty konfiguracji Firebase. Zasada minimalnych uprawnień — aplikacja żąda dostępu tylko do zasobów niezbędnych do działania.
+
+    \item[\term{Kradzież i zgubienie telefonu — ryzyko R4 (P=2, W=4):}]
+    Nieodblokowane urządzenie w rękach osoby trzeciej może dawać pełny dostęp do archiwum medycznego. \\
+    \textbf{Działania zapobiegawcze:} Uwierzytelnianie biometryczne (Android Biometric API) lub PIN jako warunek uruchomienia aplikacji (wymaganie \req{W\_NFUN\_15}). Automatyczna blokada sesji po 5 minutach bezczynności. Opcja zdalnego usunięcia danych w powiązaniu z kontem Firebase. \\
+    \textbf{Działania naprawcze:} W przypadku utraty urządzenia użytkownik może zablokować konto, uniemożliwiając synchronizację i logowanie z nowego urządzenia.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Wiarygodność systemu i nadużycia}
+% ────────────────────────────────────────────────────────────
+
+Z uwagi na realne benefity płynące z tytułu \term{ZHDK} (ulgi w komunikacji, darmowe leki) oraz możliwość nieuprawnionego odliczenia podatkowego, system narażony jest na próby manipulacji.
+
+\begin{description}[leftmargin=0pt]
+    \item[\term{Fałszowanie historii donacji — ryzyko R6 (P=4, W=5):}]
+    Użytkownicy mogą manualnie wpisywać nieodbyte donacje, aby sztucznie zawyżać licznik litrów. Brak integracji z bazą RCKiK (ryzyko R9) sprawia, że problem jest systemowy — aplikacja działa wyłącznie na zasadzie deklaratywnej. \\
+    \textbf{Działania zapobiegawcze:} Edukacyjny komunikat podczas onboardingu informujący o konsekwencjach prawnych (fałszywe dane w dokumentach podatkowych). Disclaimer przy generowaniu raportu PIT: „Raport oparty jest wyłącznie na danych wpisanych przez użytkownika. Odpowiedzialność za poprawność leży po stronie dawcy." \\
+    \textbf{Strategia długoterminowa:} Otwarcie dialogu z RCKiK w celu uzyskania dostępu do oficjalnego API weryfikacyjnego (poza zakresem MVP).
+
+    
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Zagrożenia operacyjne}
+% ────────────────────────────────────────────────────────────
+
+\begin{description}[leftmargin=0pt]
+    \item[\term{Niestabilność usług zewnętrznych — ryzyko R7 (P=2, W=3):}]
+    Firebase może przejść w tryb niedostępności (outage), Google Maps API może przekroczyć limity darmowego planu Spark. \\
+    \textbf{Działania zapobiegawcze:} Kluczowe funkcje (karencja, licznik litrów, archiwum badań) działają w trybie offline (wymaganie \req{W\_NFUN\_13}). Mapa RCKiK obsługuje tryb cache — punkty poboru ładowane są przy pierwszym uruchomieniu i przechowywane lokalnie. \\
+    \textbf{Działania naprawcze:} Monitoring dostępności Firebase przez narzędzia alertów (np.\ Firebase Performance Monitoring). Jasny komunikat w interfejsie o trybie offline zamiast kręcącego się spinnera.
+
+    \item[\term{Negatywny odbiór grywalizacji — ryzyko R8 (P=3, W=2):}]
+    Część dawców może poczuć się urażona mechanizmami gry stosowanymi w kontekście służby społecznej. \\
+    \textbf{Działania zapobiegawcze:} Elementy grywalizacji (wirtualne krople, poziomy, odznaki) są estetycznie stonowane i subtelne — nie dominują nad interfejsem. Opcja wyłączenia animacji gamifikacyjnych w ustawieniach aplikacji.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Podsumowanie Strategii Zarządzania Ryzykiem}
+% ────────────────────────────────────────────────────────────
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{L{0.4cm} L{3cm} L{3.5cm} X}
+  \toprule
+  \textbf{ID} & \textbf{Ryzyko} & \textbf{Strategia} & \textbf{Kluczowe działanie} \\
+  \midrule
+  R1 & Błąd karencji & Redukcja & Testy jednostkowe algorytmu + ostrzeżenia w UI \\
+  R2 & Błąd OCR & Redukcja & Obowiązkowa weryfikacja ręczna + zapis oryginalnego zdjęcia \\
+  R3 & Wyciek danych & Unikanie & Dane medyczne wyłącznie lokalnie; serwer bez wrażliwych danych \\
+  R4 & Kradzież telefonu & Redukcja & Biometria, auto-lock, opcja zdalnego wylogowania \\
+  R5 & Utrata danych & Redukcja & Eksport ręczny + opcjonalny backup z szyfrowaniem E2E \\
+  R6 & Fałszywe donacje & Akceptacja & Disclaimer + edukacja; weryfikacja poza zakresem MVP \\
+  R7 & Awaria usług zewn. & Redukcja & Tryb offline dla kluczowych funkcji; cache mapy \\
+  R8 & Odbiór grywalizacji & Redukcja & Opcja wyłączenia; stonowany design \\
+  
+  \bottomrule
+\end{tabularx}
+\end{center}
 % ════════════════════════════════════════════════════════════
 \section{Podsumowanie Wniosków Projektowych}
 % ════════════════════════════════════════════════════════════
@@ -645,6 +939,353 @@ systemu:
         w angażującą ścieżkę użytkownika.
 \end{itemize}
 
+% ════════════════════════════════════════════════════════════
+\section{Produkty projektu}
+% ════════════════════════════════════════════════════════════
+
+W wyniku realizacji projektu dostarczone zostaną następujące produkty końcowe:
+
+\begin{itemize}
+  \item \textbf{Wersja MVP aplikacji mobilnej:} Mobilny System Wspomagania i Monitorowania Aktywności HDK zrealizowany na platformę Android (Flutter). Serwer API oparty o framework FastAPI ze zintegrowaną bazą SQLite, spakowany w środowisko kontenerowe (Docker) wraz z automatyzacją wdrożeń (GitHub Actions).
+  \item \textbf{Dokumentacja techniczna i raporty:} Raport z testów scenariuszy użytkownika, specyfikacja wymagań Volere oraz kontrakty API.
+  \item \textbf{Komplet artefaktów zaliczeniowych:} Dokumentacja końcowa, prezentacja realizacyjna oraz ostateczna wersja kodu do obrony.
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════
+\section{Struktura organizacyjna i zakresy odpowiedzialności (w tym WBS)}
+% ════════════════════════════════════════════════════════════
+
+\subsection{Struktura organizacyjna zespołu i role}
+
+Dla zapewnienia płynności pracy w zespole wyznaczono przejrzysty podział odpowiedzialności:
+
+\begin{itemize}
+  \item \textbf{Jakub Kret (Lider projektu / Frontend + UI/UX):} Koordynacja prac, prowadzenie spotkań (weekly), przygotowanie dokumentacji i wdrażanie warstwy interfejsu aplikacji (Flutter).
+  \item \textbf{Daniel Abbas (Inżynier backendowy / Architekt algorytmów):} Logika serwerowa, spójność integracji, algorytmy karencji, kalkulator PIT oraz komponenty OCR.
+  \item \textbf{Jakub Adamczyk (Inżynier danych / Analityk wymagań):} Inżynieria wymagań (Volere), projekt danych, autoryzacja oraz architektura powiadomień Push.
+\end{itemize}
+
+Zespół wykorzystuje platformę Discord do komunikacji bieżącej oraz system ClickUp jako tablicę zadań.
+
+\subsection{Struktura Podziału Pracy (WBS - Work Breakdown Structure)}
+
+Poniższa lista przedstawia dekompozycję zadań projektowych wraz z przypisanymi odpowiedzialnościami i oczekiwanymi rezultatami:
+
+\begin{enumerate}[label=\textbf{\arabic*.0}]
+  \item \textbf{Inicjacja i analiza wymagań} (Kuba A. + Kuba K.): Zakres, user stories, kryteria akceptacji, słownik pojęć.
+  \item \textbf{Projekt architektury i model danych} (Daniel + Kuba A.): Schemat danych, kontrakty API, zasady autoryzacji.
+  \item \textbf{Implementacja backendu} (Daniel): Logika karencji, profile, historia donacji, kalkulator PIT.
+  \item \textbf{Implementacja frontendu mobilnego} (Kuba K.): Ekrany aplikacji, UX przepływów, integracja z API.
+  \item \textbf{Powiadomienia i mechanizmy motywacji} (Kuba A. + Kuba K.): Alerty, przypomnienia, elementy grywalizacji.
+  \item \textbf{Testy, poprawki i stabilizacja} (Cały zespół): Raport testów, poprawki krytyczne, wersja MVP.
+  \item \textbf{Dokumentacja końcowa i prezentacja} (Cały zespół): Komplet artefaktów zaliczeniowych.
+\end{enumerate}
+
+\subsection{Oszacowania pracochłonności}
+
+Łączna estymacja projektu zakłada wykorzystanie 190 roboczogodzin (nie wliczając bufora ryzyka 10\%, wynoszącego ok. 19 h):
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{4cm} c c X}
+  \toprule
+  \textbf{Obszar prac} & \textbf{Udział} & \textbf{Roboczogodziny} & \textbf{Kluczowe zadania} \\
+  \midrule
+  Analiza + specyfikacja & 15\% & 30 h & Doprecyzowanie wymagań i testów. \\
+  \addlinespace
+  Backend + API & 30\% & 55 h & Logika karencji, profil dawcy, PIT. \\
+  \addlinespace
+  Frontend mobilny & 25\% & 50 h & Widoki, nawigacja, formularze. \\
+  \addlinespace
+  Integracja + testy & 20\% & 35 h & Testy funkcjonalne, poprawki. \\
+  \addlinespace
+  Dokumentacja + prezentacja & 10\% & 20 h & Przygotowanie do obrony. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\section{Terminy}
+% ════════════════════════════════════════════════════════════
+
+W harmonogramie ustalono następujące warunki i terminy weryfikacji kamieni milowych (kryteria ukończenia MVP):
+
+\begin{itemize}
+  \item \textbf{Zależność krytyczna:} Pełna integracja frontendu nie rozpocznie się przed wczesnym ustanowieniem API kontraktowego i zamknięciem specyfikacji bazodanowej.
+  \item \textbf{Warunek jakościowy:} Scalenie każdego modułu (merge) musi zostać poprzedzone zaliczeniem testów scenariusza użytkownika.
+  \item \textbf{Definicja gotowego MVP:} Działający główny przepływ (profil dawcy $\rightarrow$ karencja $\rightarrow$ przypomnienia), poprawne wyliczenia kluczowych danych terminowych oraz kompletna dokumentacja i demonstracja działania systemu.
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════
+\section{Harmonogram}
+% ════════════════════════════════════════════════════════════
+
+Harmonogram zaplanowano na 9 tygodni aktywnego rozwoju iteracyjnego:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{X c}
+  \toprule
+  \textbf{Zadanie / Pakiet Roboczy} & \textbf{Tygodnie realizacji} \\
+  \midrule
+  Wymagania i use case (Analiza) & 1 -- 2 \\
+  \addlinespace
+  Projekt danych i API (Architektura) & 2 -- 3 \\
+  \addlinespace
+  Backend - logika kluczowa (Implementacja) & 4 -- 6 \\
+  \addlinespace
+  Frontend widoki i integracja (Implementacja) & 5 -- 7 \\
+  \addlinespace
+  Powiadomienia i motywacja (Rozwój) & 6 -- 7 \\
+  \addlinespace
+  Testy i poprawki (Stabilizacja MVP) & 8 \\
+  \addlinespace
+  Dokumentacja i przygotowanie oddania (Zakończenie) & 9 \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+\begin{ganttchart}[
+    hgrid,
+    vgrid,
+    x unit=0.88cm,
+    y unit title=0.5cm,
+    y unit chart=0.5cm,
+    title height=1,
+    bar height=0.6,
+    group height=0.7,
+    title label font=\scriptsize,
+    bar label font=\scriptsize,
+    group label font=\scriptsize
+  ]{1}{9}
+    \gantttitle{Harmonogram (tygodnie projektu)}{9} \\
+    \gantttitlelist{1,...,9}{1} \\
+
+    \ganttgroup{Inicjacja i analiza}{1}{2} \\
+    \ganttbar{Wymagania i use case}{1}{2} \\
+    \ganttbar{Projekt danych i API}{2}{3} \\
+
+    \ganttgroup{Implementacja}{3}{7} \\
+    \ganttbar{Backend -- logika kluczowa}{3}{5} \\
+    \ganttbar{Frontend -- widoki i integracja}{4}{6} \\
+    \ganttbar{Powiadomienia i motywacja}{6}{7} \\
+
+    \ganttgroup{Domknięcie projektu}{7}{9} \\
+    \ganttbar{Testy i poprawki}{7}{8} \\
+    \ganttbar{Dokumentacja i przygotowanie oddania}{8}{9}
+  \end{ganttchart}
+\section{Plan komunikacji}
+% ════════════════════════════════════════════════════════════
+
+% ────────────────────────────────────────────────────────────
+\subsection{Kanały komunikacji}
+% ────────────────────────────────────────────────────────────
+
+\begin{description}[leftmargin=0pt]
+  \item[\term{Discord (główny kanał roboczy):}]
+  Platforma służy do codziennych rozmów technicznych, code review. Cotygodniowe spotkania synchronizacyjne odbywają się na kanale głosowym.
+
+  \item[\term{ClickUp (zarządzanie zadaniami):}]
+  Wszystkie zadania projektowe są rejestrowane i aktualizowane w systemie ClickUp. Ticket zawiera opis, kryteria akceptacji, przypisanego wykonawcę oraz szacowany czas realizacji. Status zadań (\textit{To Do}, \textit{In Progress}, \textit{Review}, \textit{Done}) aktualizowany jest przez wykonawcę w czasie rzeczywistym, co zapewnia przejrzysty widok postępów dla całego zespołu.
+
+  \item[\term{Messenger (komunikacja pilna):}]
+  Kanał rezerwowy stosowany wyłącznie w sytuacjach wymagających natychmiastowej reakcji — np.\ awaria środowiska CI/CD, krytyczny błąd na gałęzi \texttt{main} lub konieczność szybkiej decyzji architektonicznej. Wiadomości na tym kanale traktowane są jako wymagające odpowiedzi w ciągu maksymalnie 2 godzin.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Rytm spotkań}
+% ────────────────────────────────────────────────────────────
+
+\begin{description}[leftmargin=0pt]
+  \item[\term{Weekly (raz w tygodniu, Discord):}]
+  Spotkanie synchronizacyjne trwające 30–45 minut. Agenda obejmuje: przegląd ukończonych zadań z minionego tygodnia, omówienie blockerów, aktualizację priorytetów na nadchodzący tydzień oraz krótki przegląd stanu gałęzi deweloperskiej. Notatki ze spotkania zapisywane są w dedykowanym kanale \texttt{\#notatki} na Discordzie.
+
+  \item[\term{Ad-hoc (w razie potrzeby):}]
+  W przypadku napotkania technicznego blockera lub rozbieżności projektowej organizowane jest doraźne spotkanie robocze, zazwyczaj trwające 15–20 minut. Inicjator spotkania opisuje problem minimum 30 minut przed zaproszeniem.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Dokumentowanie decyzji}
+% ────────────────────────────────────────────────────────────
+
+Każda istotna decyzja architektoniczna lub projektowa (zmiana technologii, odejście od wymagań, zmiana zakresu MVP) rejestrowana jest w formie krótkiego wpisu w dokumencie \textit{Decision Log} prowadzonym w ClickUpie. Wpis zawiera: datę, treść decyzji, uzasadnienie oraz osobę odpowiedzialną. Praktyka ta eliminuje ryzyko utraty kontekstu decyzyjnego w przypadku dłuższej przerwy w pracach nad projektem.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{image.png}
+    
+    \label{fig:placeholder}
+\end{figure}
+%%etao5:
+% ════════════════════════════════════════════════════════════
+\section{Plan jakości}
+% ════════════════════════════════════════════════════════════
+
+Plan jakości definiuje mierzalne kryteria akceptacji produktu oraz procedury weryfikacji,
+które muszą zostać spełnione przed uznaniem systemu \sys za gotowy do wydania w wersji MVP.
+
+% ────────────────────────────────────────────────────────────
+\subsection{Cele jakościowe}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+  \item \textbf{Poprawność obliczeń:} Algorytm karencji oraz kalkulator ulgi PIT muszą
+        dawać wyniki zgodne z obowiązującymi przepisami (rozporządzenie MZ) i wzorcowymi
+        przypadkami testowymi w 100\% sprawdzonych scenariuszy.
+
+  \item \textbf{Stabilność:} Aplikacja nie może zakończyć działania awaryjnie (crash)
+        podczas wykonywania głównego przepływu użytkownika (rejestracja donacji $\to$
+        widok karencji $\to$ raport PIT) na urządzeniach z Androidem 10 lub nowszym.
+
+  \item \textbf{Dostępność i responsywność:} Interfejs reaguje na gesty i zdarzenia
+        dotykowe w czasie poniżej 200\,ms. Renderowanie mapy punktów pobrań utrzymuje
+        minimalnie 30 FPS na urządzeniach klasy średniej ( \req{W\_NFUN\_12\_01}).
+
+  \item \textbf{Bezpieczeństwo danych:} Dane wrażliwe (historia donacji, wyniki badań)
+        przechowywane są wyłącznie lokalnie lub, przy wyborze backupu chmurowego,
+        w postaci zaszyfrowanej kluczem pochodnym od hasła użytkownika
+        (wymaganie \req{W\_NFUN\_15}).
+
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Strategia i rodzaje testów}
+% ────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{3.2cm} X L{2.8cm}}
+  \toprule
+  \textbf{Typ testu} & \textbf{Zakres i opis} & \textbf{Odpowiedzialny} \\
+  \midrule
+  Testy jednostkowe
+    & Weryfikacja logiki karencji (wszystkie kombinacje składnika, płci i limitów rocznych)
+      oraz poprawności przelicznika litrażu i kalkulatora PIT. Realizowane w środowisku
+      Flutter Test / Dart.
+    & Daniel Abbas \\
+  \addlinespace
+  Testy integracyjne
+    & Sprawdzenie kontraktów pomiędzy frontendem a backendem (FastAPI): zgodność schematów
+      JSON, obsługa błędów sieciowych, synchronizacja danych offline/online.
+    & Daniel Abbas\\
+  \addlinespace
+  Testy scenariuszy użytkownika (E2E)
+    & Manualne przejście przez kluczowe przepływy: rejestracja $\to$ profil $\to$ donacja
+      $\to$ karencja $\to$ raport PIT oraz skanowanie OCR $\to$ weryfikacja wyników.
+      Raportowane w systemie ClickUp.
+    & Jakub Adamczyk\\
+  
+  \addlinespace
+  Testy bezpieczeństwa
+    & Weryfikacja blokady biometrycznej (Android Biometric API), automatycznego zamknięcia
+      sesji po 5 minutach bezczynności oraz braku wrażliwych danych w logach systemowych.
+    & Jakub Adamczyk \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Kryteria wejścia i wyjścia z fazy testów}
+% ────────────────────────────────────────────────────────────
+
+\begin{description}[leftmargin=0pt]
+  \item[\term{Kryteria wejścia:}]
+  Ukończona implementacja modułu podlegającego testowi; dostępne środowisko testowe
+  (emulator Android API\,33+ lub fizyczne urządzenie); zdefiniowane przypadki testowe
+  zarejestrowane w ClickUp.
+
+  \item[\term{Kryteria wyjścia (Definition of Done):}]
+  Wszystkie testy jednostkowe przechodzą bez błędów (\textit{0 failures}); brak
+  otwartych błędów o priorytecie \textit{Critical} lub \textit{Blocker}; raport
+  testów scenariuszy użytkownika zaakceptowany przez lidera projektu; wyniki ankiety UX
+  spełniają próg 70\% pozytywnych skojarzeń.
+\end{description}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Narzędzia i środowisko zapewnienia jakości}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+  \item \textbf{Flutter Test / Dart Test} — testy jednostkowe i widgetowe.
+  \item \textbf{GitHub Actions (CI)} — automatyczne uruchamianie testów przy każdym
+        \texttt{pull request} do gałęzi \texttt{main}.
+  \item \textbf{ClickUp} — rejestrowanie i śledzenie błędów; statusy:
+        \textit{Open $\to$ In Progress $\to$ Verified $\to$ Closed}.
+  \item \textbf{Discord \#qa-logs} — kanał do raportowania wyników testów manualnych
+        i decyzji o scaleniu (\textit{merge}).
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════
+\section{Koszty}
+% ════════════════════════════════════════════════════════════
+
+Projekt realizowany jest w formule studenckiej jako praca zespołowa bez zewnętrznego
+finansowania. Poniższa analiza obejmuje koszty pieniężne, infrastrukturalne
+oraz koszt czasu pracy zespołu.
+
+% ────────────────────────────────────────────────────────────
+\subsection{Koszty pieniężne i infrastrukturalne}
+% ────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabularx}{\linewidth}{L{4.5cm} c X}
+  \toprule
+  \textbf{Pozycja} & \textbf{Koszt (PLN)} & \textbf{Uwagi} \\
+  \midrule
+  Wynagrodzenia zespołu
+    & 0{,}00
+    & Praca w ramach projektu zaliczeniowego. \\
+  \addlinespace
+  Firebase (Spark Plan)
+    & 0{,}00
+    & Bezpłatny pakiet startowy pokrywa: bazę Firestore, Cloud Functions
+      (limit 2\,mln wywołań/mies.), powiadomienia FCM oraz hosting
+      — wystarczający na potrzeby fazy MVP i testów. \\
+  \addlinespace
+  Google Maps Platform
+    & 0{,}00
+    & Darmowy miesięczny kredyt pokrywa mapowanie punktów RCKiK
+      przy przewidywanym ruchu prototypu. \\
+  \addlinespace
+  Google ML Kit (OCR)
+    & 0{,}00
+    & Biblioteka bezpłatna, działająca lokalnie na urządzeniu
+      (on-device inference) bez opłat za wywołania API. \\
+  \addlinespace
+  Narzędzia zespołowe (ClickUp, Discord)
+    & 0{,}00
+    & Plany bezpłatne wystarczające dla 3-osobowego zespołu. \\
+  \midrule
+  \textbf{Łącznie (faza MVP)}
+    & \textbf{0{,}00}
+    & Ewentualny koszt konta Google Play poniesiony opcjonalnie
+      po zakończeniu projektu. \\
+  \bottomrule
+\end{tabularx}
+\end{center}
+
+% ────────────────────────────────────────────────────────────
+\subsection{Koszt czasu pracy }
+% ────────────────────────────────────────────────────────────
+
+Całkowita estymowana pracochłonność projektu wynosi \textbf{190 roboczogodzin} i \textbf{209 roboczogodzin} z doliczonym buforem 10\,\% (ok.\ 19\,h).
+Szczegółowy podział przedstawia tabela w sekcji \textbf{10.} (WBS).
+
+Przy założeniu rynkowej stawki juniora Flutter/Python Developer
+(ok.\ 40\,PLN/h brutto), szacunkowy ekwiwalent pieniężny nakładu pracy wynosi:
+
+\[
+  209\,\text{h} \times 40\,\frac{\text{PLN}}{\text{h}} = \mathbf{8\,360\,\text{PLN}}
+\]
+
+
+% ────────────────────────────────────────────────────────────
+\subsection{Potencjalne koszty skalowania (poza zakresem MVP)}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+  \item \textbf{Firebase Blaze (Pay-as-you-go):} Przy wzroście bazy użytkowników
+        powyżej limitów planu Spark konieczne będzie przejście na plan płatny
+        (rozliczenie za wywołania funkcji i ruch sieciowy).
+  \item \textbf{Certyfikat Apple Developer:} Rozszerzenie aplikacji na platformę
+        iOS wymagałoby poniesienia rocznej opłaty \$99 USD.
+\end{itemize}
 % ════════════════════════════════════════════════════════════
 \section*{Bibliografia}
 % ════════════════════════════════════════════════════════════
