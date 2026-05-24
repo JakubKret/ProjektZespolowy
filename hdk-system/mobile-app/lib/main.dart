@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/database/app_database.dart';
-import 'core/workflows/donor_workflow_service.dart';
-import 'screens/main_navigation_screen.dart';
+import 'core/session/donor_session.dart';
 import 'screens/login_screen.dart';
+import 'screens/main_navigation_screen.dart';
 
-final databaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase();
-});
-
-final donorWorkflowServiceProvider = Provider<DonorWorkflowService>((ref) {
-  final db = ref.watch(databaseProvider);
-  return DonorWorkflowService(db);
-});
+export 'core/providers/app_providers.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +24,46 @@ class Krwiodawstwo extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD32F2F)),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: const _SessionGate(),
+    );
+  }
+}
+
+class _SessionGate extends ConsumerStatefulWidget {
+  const _SessionGate();
+
+  @override
+  ConsumerState<_SessionGate> createState() => _SessionGateState();
+}
+
+class _SessionGateState extends ConsumerState<_SessionGate> {
+  late Future<int?> _restoreFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreFuture = tryRestoreSession(ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<int?>(
+      future: _restoreFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(color: Color(0xFFD32F2F)),
+            ),
+          );
+        }
+
+        if (snapshot.data != null) {
+          return const MainNavigationScreen();
+        }
+
+        return const LoginScreen();
+      },
     );
   }
 }

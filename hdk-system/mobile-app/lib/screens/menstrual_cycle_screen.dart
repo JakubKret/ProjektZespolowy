@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:drift/drift.dart' as drift;
 
-import '../main.dart';
-import '../core/database/app_database.dart';
-
-final activeCycleProvider = FutureProvider<MenstrualCyclesTableData?>((
-  ref,
-) async {
-  final db = ref.watch(databaseProvider);
-  final activeCycles =
-      await (db.select(db.menstrualCyclesTable)
-            ..where((t) => t.isActive.equals(true))
-            ..where(
-              (t) => t.donorProfileId.equals(1),
-            )) // TODO: ID zalogowanego użytkownika
-          .get();
-
-  return activeCycles.isNotEmpty ? activeCycles.first : null;
-});
+import '../core/providers/app_providers.dart';
 
 class MenstrualCycleScreen extends ConsumerWidget {
-  const MenstrualCycleScreen({Key? key}) : super(key: key);
+  const MenstrualCycleScreen({super.key});
 
   Future<void> _startCycle(BuildContext context, WidgetRef ref) async {
+    final donorId = ref.read(currentDonorIdProvider);
+    if (donorId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Brak aktywnego profilu dawcy.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     final DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -48,10 +42,10 @@ class MenstrualCycleScreen extends ConsumerWidget {
     final workflowService = ref.read(donorWorkflowServiceProvider);
     try {
       await workflowService.startCycle(
-        donorProfileId: 1, // TODO: ID zalogowanego użytkownika
+        donorProfileId: donorId,
         startDate: selectedDate,
       );
-      ref.invalidate(activeCycleProvider);
+      invalidateDonorData(ref);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -72,6 +66,9 @@ class MenstrualCycleScreen extends ConsumerWidget {
     WidgetRef ref,
     DateTime startDate,
   ) async {
+    final donorId = ref.read(currentDonorIdProvider);
+    if (donorId == null) return;
+
     final DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -96,10 +93,10 @@ class MenstrualCycleScreen extends ConsumerWidget {
     final workflowService = ref.read(donorWorkflowServiceProvider);
     try {
       await workflowService.closeCycleAndRecomputeEligibility(
-        donorProfileId: 1, // TODO: ID zalogowanego użytkownika
+        donorProfileId: donorId,
         endDate: selectedDate,
       );
-      ref.invalidate(activeCycleProvider);
+      invalidateDonorData(ref);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -169,7 +166,6 @@ class MenstrualCycleScreen extends ConsumerWidget {
                   textAlign: TextAlign.justify,
                 ),
                 const SizedBox(height: 40),
-
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -208,7 +204,6 @@ class MenstrualCycleScreen extends ConsumerWidget {
                   ),
                 ),
                 const Spacer(),
-
                 if (!isCycleActive)
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

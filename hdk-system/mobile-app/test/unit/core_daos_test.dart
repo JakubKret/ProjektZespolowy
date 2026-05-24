@@ -31,14 +31,19 @@ void main() {
     await db.close();
   });
 
+  int donorCounter = 0;
+
   Future<int> insertDonor({
     String firstName = 'Jan',
     String lastName = 'Kowalski',
     DateTime? birthDate,
     String sex = 'M',
   }) {
+    donorCounter++;
     return donorProfileDao.createProfile(
       DonorProfileTableCompanion.insert(
+        email: 'test$donorCounter@example.com',
+        passwordHash: 'hash',
         firstName: firstName,
         lastName: lastName,
         birthDate: birthDate ?? DateTime(1990, 1, 1),

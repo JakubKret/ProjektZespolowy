@@ -1,38 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../core/database/app_database.dart';
-import '../core/workflows/donor_workflow_service.dart';
 
-class AddDonationScreen extends StatefulWidget {
-  const AddDonationScreen({Key? key}) : super(key: key);
+import '../core/bootstrap/reference_data_seed.dart';
+import '../core/providers/app_providers.dart';
+
+class AddDonationScreen extends ConsumerStatefulWidget {
+  const AddDonationScreen({super.key});
 
   @override
-  State<AddDonationScreen> createState() => _AddDonationScreenState();
+  ConsumerState<AddDonationScreen> createState() => _AddDonationScreenState();
 }
 
-class _AddDonationScreenState extends State<AddDonationScreen> {
+class _AddDonationScreenState extends ConsumerState<AddDonationScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Zmienne przechowujące stan formularza
   DateTime _selectedDate = DateTime.now();
   String _selectedType = 'Krew pełna';
+  int? _selectedBloodCenterId;
   final TextEditingController _amountController = TextEditingController(
     text: '450',
-  ); // Domyślna wartość w ml
+  );
 
   final List<String> _donationTypes = ['Krew pełna', 'Osocze', 'Płytki krwi'];
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(), // Nie pozwalamy na donacje w przyszłości
+      lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFD32F2F), // Medyczna czerwień na kalendarzu
+              primary: Color(0xFFD32F2F),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -42,69 +50,82 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
       },
     );
     if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
+      setState(() => _selectedDate = picked);
     }
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      final int amount = int.parse(_amountController.text);
+    if (!_formKey.currentState!.validate()) return;
 
-      // Mapujemy polskie nazwy na te obsługiwane przez backend
-      String backendDonationType = 'whole_blood';
-      if (_selectedType == 'Osocze') backendDonationType = 'plasma';
-      if (_selectedType == 'Płytki krwi') backendDonationType = 'platelets';
+    final donorId = ref.read(currentDonorIdProvider);
+    if (donorId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Brak aktywnego profilu dawcy.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-      try {
-        // Inicjalizacja bazy - w prawdziwej aplikacji przekażemy ją z góry np. przez Providera
-        final database = AppDatabase();
-        final workflowService = DonorWorkflowService(database);
-
-        // Wywołanie dokładnie tej funkcji, którą przesłałeś w plikach!
-        await workflowService.recordDonationAndRefreshBenefits(
-          donorProfileId: 1, // TODO: Pobrać zalogowanego użytkownika
-          bloodCenterId: 1, // TODO: Wybrać z listy / mapy
-          donationDate: _selectedDate,
-          volumeMl: amount,
-          donationType: backendDonationType,
-          annualIncomePln: 0.0, // Tymczasowo 0, potrzebne do PIT
-        );
-
-        if (!mounted) return;
-
-        // Sukces
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Zapisano: $_selectedType ($amount ml) z dnia ${DateFormat('dd.MM.yyyy').format(_selectedDate)}',
-            ),
-            backgroundColor: Colors.green.shade600,
+    final centers = await ref.read(bloodCentersProvider.future);
+    if (centers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Brak placówek w bazie. Dodaj placówkę na mapie lub zaloguj się ponownie.',
           ),
-        );
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-        Navigator.pop(context);
-      } catch (e) {
-        // Obsługa błędu zapisu do lokalnej bazy
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Błąd zapisu: $e'),
-            backgroundColor: Colors.red.shade600,
+    final bloodCenterId = _selectedBloodCenterId ?? centers.first.id;
+    final amount = int.parse(_amountController.text);
+
+    String backendDonationType = 'whole_blood';
+    if (_selectedType == 'Osocze') backendDonationType = 'plasma';
+    if (_selectedType == 'Płytki krwi') backendDonationType = 'platelets';
+
+    try {
+      final workflowService = ref.read(donorWorkflowServiceProvider);
+      await workflowService.recordDonationAndRefreshBenefits(
+        donorProfileId: donorId,
+        bloodCenterId: bloodCenterId,
+        donationDate: _selectedDate,
+        volumeMl: amount,
+        donationType: backendDonationType,
+        annualIncomePln: ReferenceDataSeed.defaultAnnualIncomePln,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Zapisano: $_selectedType ($amount ml) z dnia ${DateFormat('dd.MM.yyyy').format(_selectedDate)}',
           ),
-        );
-      }
+          backgroundColor: Colors.green.shade600,
+        ),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Błąd zapisu: $e'),
+          backgroundColor: Colors.red.shade600,
+        ),
+      );
     }
   }
 
   @override
-  void dispose() {
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final centersAsync = ref.watch(bloodCentersProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -133,8 +154,6 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 30),
-
-                // Pole wyboru daty donacji
                 const Text(
                   'Data donacji',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -164,48 +183,74 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Pole wyboru typu składnika
+                const Text(
+                  'Placówka',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                centersAsync.when(
+                  loading: () => const LinearProgressIndicator(
+                    color: Color(0xFFD32F2F),
+                  ),
+                  error: (e, _) => Text('Błąd wczytywania placówek: $e'),
+                  data: (centers) {
+                    if (centers.isEmpty) {
+                      return const Text(
+                        'Brak placówek — wróć na mapę i dodaj dane.',
+                        style: TextStyle(color: Colors.orange),
+                      );
+                    }
+                    final selectedId =
+                        _selectedBloodCenterId ?? centers.first.id;
+                    return DropdownButtonFormField<int>(
+                      initialValue: selectedId,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      items: centers
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c.id,
+                              child: Text('${c.name} (${c.city})'),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => _selectedBloodCenterId = value);
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
                 const Text(
                   'Składnik krwi',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: _selectedType,
+                  initialValue: _selectedType,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(color: Color(0xFFD32F2F)),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 16.0,
                     ),
                   ),
-                  items: _donationTypes.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
+                  items: _donationTypes
+                      .map(
+                        (type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (newValue) {
                     setState(() {
                       _selectedType = newValue!;
-                      // Dopasowanie domyślnej ilości na podstawie składnika
                       if (_selectedType == 'Osocze') {
                         _amountController.text = '600';
                       } else if (_selectedType == 'Płytki krwi') {
-                        _amountController.text =
-                            '250'; // Zależnie od wytycznych
+                        _amountController.text = '250';
                       } else {
                         _amountController.text = '450';
                       }
@@ -213,8 +258,6 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-
-                // Pole objętości
                 const Text(
                   'Ilość (w mililitrach)',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -227,15 +270,6 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                     suffixText: 'ml',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(color: Color(0xFFD32F2F)),
                     ),
                   ),
                   validator: (value) {
@@ -249,8 +283,6 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                   },
                 ),
                 const SizedBox(height: 40),
-
-                // Przycisk zapisu
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -262,7 +294,6 @@ class _AddDonationScreenState extends State<AddDonationScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      elevation: 0,
                     ),
                     child: const Text(
                       'Zapisz donację',

@@ -19,6 +19,8 @@ class DriftDonorUseCase implements DonorUseCaseContract {
   ) {
     return _run(() async {
       final donorId = await _workflow.createDonorProfile(
+        email: request.email,
+        passwordHash: request.passwordHash,
         firstName: request.firstName,
         lastName: request.lastName,
         birthDate: request.birthDate,

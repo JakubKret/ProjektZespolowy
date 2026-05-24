@@ -5,6 +5,8 @@ class DonorProfileTable extends Table {
   String get tableName => 'donor_profile';
 
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get email => text().unique()();
+  TextColumn get passwordHash => text()();
   TextColumn get firstName => text()();
   TextColumn get lastName => text()();
   DateTimeColumn get birthDate => dateTime()();

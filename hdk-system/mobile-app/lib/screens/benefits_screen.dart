@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BenefitsScreen extends StatelessWidget {
-  const BenefitsScreen({Key? key}) : super(key: key);
+import '../core/providers/app_providers.dart';
+
+class BenefitsScreen extends ConsumerWidget {
+  const BenefitsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final benefitsAsync = ref.watch(benefitsDataProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -21,52 +25,62 @@ class BenefitsScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24.0),
-        children: [
-          _buildPitCard(theme),
-          const SizedBox(height: 32),
-          Text(
-            'Twoje Odznaki ZHDK',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildBadgeItem(
-            theme,
-            'Zasłużony Honorowy Dawca Krwi III stopnia',
-            'Brązowa odznaka (oddane 6 litrów)',
-            true,
-          ),
-          const SizedBox(height: 12),
-          _buildBadgeItem(
-            theme,
-            'Zasłużony Honorowy Dawca Krwi II stopnia',
-            'Srebrna odznaka (oddane 12 litrów)',
-            false,
-          ),
-          const SizedBox(height: 12),
-          _buildBadgeItem(
-            theme,
-            'Zasłużony Honorowy Dawca Krwi I stopnia',
-            'Złota odznaka (oddane 18 litrów)',
-            false,
-          ),
-          const SizedBox(height: 12),
-          _buildBadgeItem(
-            theme,
-            'HDK - Zasłużony dla Zdrowia Narodu',
-            'Tytuł MZ (oddane 20 litrów)',
-            false,
-          ),
-        ],
+      body: benefitsAsync.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: Color(0xFFD32F2F)),
+        ),
+        error: (error, _) => Center(child: Text('Błąd: $error')),
+        data: (benefits) {
+          if (benefits == null) {
+            return const Center(child: Text('Brak danych profilu.'));
+          }
+
+          final profileAsync = ref.watch(donorDashboardProvider);
+          final profile = profileAsync.value?.profile;
+
+          return ListView(
+            padding: const EdgeInsets.all(24.0),
+            children: [
+              _buildPitCard(theme, benefits.pitSummary?.netDeductionPln ?? 0),
+              const SizedBox(height: 32),
+              Text(
+                'Twoje Odznaki ZHDK',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (benefits.badges.isEmpty)
+                Text(
+                  'Brak zdefiniowanych odznak w bazie.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+                )
+              else
+                ...benefits.badges.map((badge) {
+                  final subtitle = profile != null
+                      ? badge.subtitleFor(profile)
+                      : badge.definition.issuingBody;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildBadgeItem(
+                      theme,
+                      badge.definition.name,
+                      subtitle,
+                      badge.isEarned,
+                    ),
+                  );
+                }),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildPitCard(ThemeData theme) {
+  Widget _buildPitCard(ThemeData theme, double netDeductionPln) {
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
@@ -78,7 +92,7 @@ class BenefitsScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.3),
+            color: Colors.red.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -107,9 +121,9 @@ class BenefitsScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 8),
-          const Text(
-            '234.00 PLN',
-            style: TextStyle(
+          Text(
+            '${netDeductionPln.toStringAsFixed(2)} PLN',
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
               fontSize: 36,
@@ -119,7 +133,7 @@ class BenefitsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(

@@ -24,6 +24,12 @@ class DonorProfileDao extends DatabaseAccessor<AppDatabase>
         .watchSingleOrNull();
   }
 
+  Future<DonorProfileTableData?> getProfileByEmail(String email) {
+    return (select(donorProfileTable)
+          ..where((t) => t.email.equals(email.trim().toLowerCase())))
+        .getSingleOrNull();
+  }
+
   Future<List<DonorProfileTableData>> getAllProfiles() {
     return (select(donorProfileTable)
           ..orderBy([(t) => OrderingTerm.asc(t.id)]))

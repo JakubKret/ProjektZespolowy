@@ -17,9 +17,14 @@ void main() {
     await db.close();
   });
 
+  int donorCounter = 0;
+
   Future<int> insertDonor() {
+    donorCounter++;
     return db.into(db.donorProfileTable).insert(
           DonorProfileTableCompanion.insert(
+            email: 'jan$donorCounter@test.pl',
+            passwordHash: 'hash',
             firstName: 'Jan',
             lastName: 'Kowalski',
             birthDate: DateTime(1990, 1, 1),

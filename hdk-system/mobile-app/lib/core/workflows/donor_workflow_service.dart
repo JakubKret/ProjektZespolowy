@@ -40,6 +40,8 @@ class DonorWorkflowService {
   }
 
   Future<int> createDonorProfile({
+    required String email,
+    required String passwordHash,
     required String firstName,
     required String lastName,
     required DateTime birthDate,
@@ -48,6 +50,8 @@ class DonorWorkflowService {
     String? rhFactor,
   }) {
     return _donorProfile.createDonorProfile(
+      email: email,
+      passwordHash: passwordHash,
       firstName: firstName,
       lastName: lastName,
       birthDate: birthDate,

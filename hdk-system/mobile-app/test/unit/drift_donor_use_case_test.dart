@@ -25,6 +25,8 @@ void main() {
     final states = await useCase
         .createDonorProfile(
           CreateDonorProfileRequest(
+            email: 'jan@test.pl',
+            passwordHash: 'hash',
             firstName: 'Jan',
             lastName: 'Kowalski',
             birthDate: DateTime(1990, 1, 1),
@@ -41,6 +43,8 @@ void main() {
   test('recordDonation emits loading then success', () async {
     final donorId = await db.donorProfileDao.createProfile(
       DonorProfileTableCompanion.insert(
+        email: 'jan2@test.pl',
+        passwordHash: 'hash',
         firstName: 'Jan',
         lastName: 'Kowalski',
         birthDate: DateTime(1990, 1, 1),
@@ -71,6 +75,8 @@ void main() {
   test('sendDueNotifications emits loading then success', () async {
     final donorId = await db.donorProfileDao.createProfile(
       DonorProfileTableCompanion.insert(
+        email: 'anna@test.pl',
+        passwordHash: 'hash',
         firstName: 'Anna',
         lastName: 'Nowak',
         birthDate: DateTime(1992, 1, 1),

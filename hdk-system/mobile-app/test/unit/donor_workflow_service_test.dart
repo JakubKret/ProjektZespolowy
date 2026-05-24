@@ -22,6 +22,8 @@ void main() {
   Future<int> insertDonor({String sex = 'M'}) {
     return db.donorProfileDao.createProfile(
       DonorProfileTableCompanion.insert(
+        email: 'jan@test.pl',
+        passwordHash: 'hash',
         firstName: 'Jan',
         lastName: 'Kowalski',
         birthDate: DateTime(1990, 1, 1),

@@ -19,6 +19,8 @@ void main() {
   Future<int> seedDonor() {
     //seed :)) ;)) 8==D
     return service.createDonorProfile(
+      email: 'jan@test.pl',
+      passwordHash: 'hash',
       firstName: 'Jan',
       lastName: 'Kowalski',
       birthDate: DateTime(1990, 1, 1),

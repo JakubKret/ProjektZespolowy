@@ -52,8 +52,26 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _open());
 
+  static AppDatabase? _instance;
+
+  factory AppDatabase.instance() => _instance ??= AppDatabase();
+
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (migrator, from, to) async {
+          if (from < 2) {
+            await customStatement(
+              'ALTER TABLE donor_profile ADD COLUMN email TEXT NOT NULL DEFAULT ""',
+            );
+            await customStatement(
+              'ALTER TABLE donor_profile ADD COLUMN password_hash TEXT NOT NULL DEFAULT ""',
+            );
+          }
+        },
+      );
 
   static QueryExecutor _open() {
     return LazyDatabase(() async {

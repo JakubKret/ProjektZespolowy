@@ -2,19 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math' as math;
 import 'package:drift/drift.dart' as drift;
 
-import '../main.dart'; // import providerów bazy danych
 import '../core/database/app_database.dart';
-
-// Provider pobierający placówki z bazy
-final bloodCentersProvider = FutureProvider<List<BloodCentersTableData>>((
-  ref,
-) async {
-  final db = ref.watch(databaseProvider);
-  return await db.select(db.bloodCentersTable).get();
-});
+import '../core/providers/app_providers.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -148,7 +139,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ),
           );
 
-      ref.invalidate(bloodCentersProvider);
+      invalidateDonorData(ref);
       Future.delayed(
         const Duration(milliseconds: 500),
         _calculateNearestCenter,

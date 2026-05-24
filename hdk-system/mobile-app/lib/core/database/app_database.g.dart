@@ -22,6 +22,27 @@ class $DonorProfileTableTable extends DonorProfileTable
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _passwordHashMeta = const VerificationMeta(
+    'passwordHash',
+  );
+  @override
+  late final GeneratedColumn<String> passwordHash = GeneratedColumn<String>(
+    'password_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _firstNameMeta = const VerificationMeta(
     'firstName',
   );
@@ -101,6 +122,8 @@ class $DonorProfileTableTable extends DonorProfileTable
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    email,
+    passwordHash,
     firstName,
     lastName,
     birthDate,
@@ -123,6 +146,25 @@ class $DonorProfileTableTable extends DonorProfileTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_emailMeta);
+    }
+    if (data.containsKey('password_hash')) {
+      context.handle(
+        _passwordHashMeta,
+        passwordHash.isAcceptableOrUnknown(
+          data['password_hash']!,
+          _passwordHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_passwordHashMeta);
     }
     if (data.containsKey('first_name')) {
       context.handle(
@@ -187,6 +229,14 @@ class $DonorProfileTableTable extends DonorProfileTable
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      passwordHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}password_hash'],
+      )!,
       firstName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}first_name'],
@@ -227,6 +277,8 @@ class $DonorProfileTableTable extends DonorProfileTable
 class DonorProfileTableData extends DataClass
     implements Insertable<DonorProfileTableData> {
   final int id;
+  final String email;
+  final String passwordHash;
   final String firstName;
   final String lastName;
   final DateTime birthDate;
@@ -236,6 +288,8 @@ class DonorProfileTableData extends DataClass
   final DateTime createdAt;
   const DonorProfileTableData({
     required this.id,
+    required this.email,
+    required this.passwordHash,
     required this.firstName,
     required this.lastName,
     required this.birthDate,
@@ -248,6 +302,8 @@ class DonorProfileTableData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['email'] = Variable<String>(email);
+    map['password_hash'] = Variable<String>(passwordHash);
     map['first_name'] = Variable<String>(firstName);
     map['last_name'] = Variable<String>(lastName);
     map['birth_date'] = Variable<DateTime>(birthDate);
@@ -265,6 +321,8 @@ class DonorProfileTableData extends DataClass
   DonorProfileTableCompanion toCompanion(bool nullToAbsent) {
     return DonorProfileTableCompanion(
       id: Value(id),
+      email: Value(email),
+      passwordHash: Value(passwordHash),
       firstName: Value(firstName),
       lastName: Value(lastName),
       birthDate: Value(birthDate),
@@ -286,6 +344,8 @@ class DonorProfileTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DonorProfileTableData(
       id: serializer.fromJson<int>(json['id']),
+      email: serializer.fromJson<String>(json['email']),
+      passwordHash: serializer.fromJson<String>(json['passwordHash']),
       firstName: serializer.fromJson<String>(json['firstName']),
       lastName: serializer.fromJson<String>(json['lastName']),
       birthDate: serializer.fromJson<DateTime>(json['birthDate']),
@@ -300,6 +360,8 @@ class DonorProfileTableData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'email': serializer.toJson<String>(email),
+      'passwordHash': serializer.toJson<String>(passwordHash),
       'firstName': serializer.toJson<String>(firstName),
       'lastName': serializer.toJson<String>(lastName),
       'birthDate': serializer.toJson<DateTime>(birthDate),
@@ -312,6 +374,8 @@ class DonorProfileTableData extends DataClass
 
   DonorProfileTableData copyWith({
     int? id,
+    String? email,
+    String? passwordHash,
     String? firstName,
     String? lastName,
     DateTime? birthDate,
@@ -321,6 +385,8 @@ class DonorProfileTableData extends DataClass
     DateTime? createdAt,
   }) => DonorProfileTableData(
     id: id ?? this.id,
+    email: email ?? this.email,
+    passwordHash: passwordHash ?? this.passwordHash,
     firstName: firstName ?? this.firstName,
     lastName: lastName ?? this.lastName,
     birthDate: birthDate ?? this.birthDate,
@@ -332,6 +398,10 @@ class DonorProfileTableData extends DataClass
   DonorProfileTableData copyWithCompanion(DonorProfileTableCompanion data) {
     return DonorProfileTableData(
       id: data.id.present ? data.id.value : this.id,
+      email: data.email.present ? data.email.value : this.email,
+      passwordHash: data.passwordHash.present
+          ? data.passwordHash.value
+          : this.passwordHash,
       firstName: data.firstName.present ? data.firstName.value : this.firstName,
       lastName: data.lastName.present ? data.lastName.value : this.lastName,
       birthDate: data.birthDate.present ? data.birthDate.value : this.birthDate,
@@ -346,6 +416,8 @@ class DonorProfileTableData extends DataClass
   String toString() {
     return (StringBuffer('DonorProfileTableData(')
           ..write('id: $id, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
           ..write('firstName: $firstName, ')
           ..write('lastName: $lastName, ')
           ..write('birthDate: $birthDate, ')
@@ -360,6 +432,8 @@ class DonorProfileTableData extends DataClass
   @override
   int get hashCode => Object.hash(
     id,
+    email,
+    passwordHash,
     firstName,
     lastName,
     birthDate,
@@ -373,6 +447,8 @@ class DonorProfileTableData extends DataClass
       identical(this, other) ||
       (other is DonorProfileTableData &&
           other.id == this.id &&
+          other.email == this.email &&
+          other.passwordHash == this.passwordHash &&
           other.firstName == this.firstName &&
           other.lastName == this.lastName &&
           other.birthDate == this.birthDate &&
@@ -385,6 +461,8 @@ class DonorProfileTableData extends DataClass
 class DonorProfileTableCompanion
     extends UpdateCompanion<DonorProfileTableData> {
   final Value<int> id;
+  final Value<String> email;
+  final Value<String> passwordHash;
   final Value<String> firstName;
   final Value<String> lastName;
   final Value<DateTime> birthDate;
@@ -394,6 +472,8 @@ class DonorProfileTableCompanion
   final Value<DateTime> createdAt;
   const DonorProfileTableCompanion({
     this.id = const Value.absent(),
+    this.email = const Value.absent(),
+    this.passwordHash = const Value.absent(),
     this.firstName = const Value.absent(),
     this.lastName = const Value.absent(),
     this.birthDate = const Value.absent(),
@@ -404,6 +484,8 @@ class DonorProfileTableCompanion
   });
   DonorProfileTableCompanion.insert({
     this.id = const Value.absent(),
+    required String email,
+    required String passwordHash,
     required String firstName,
     required String lastName,
     required DateTime birthDate,
@@ -411,12 +493,16 @@ class DonorProfileTableCompanion
     this.bloodType = const Value.absent(),
     this.rhFactor = const Value.absent(),
     this.createdAt = const Value.absent(),
-  }) : firstName = Value(firstName),
+  }) : email = Value(email),
+       passwordHash = Value(passwordHash),
+       firstName = Value(firstName),
        lastName = Value(lastName),
        birthDate = Value(birthDate),
        sex = Value(sex);
   static Insertable<DonorProfileTableData> custom({
     Expression<int>? id,
+    Expression<String>? email,
+    Expression<String>? passwordHash,
     Expression<String>? firstName,
     Expression<String>? lastName,
     Expression<DateTime>? birthDate,
@@ -427,6 +513,8 @@ class DonorProfileTableCompanion
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (email != null) 'email': email,
+      if (passwordHash != null) 'password_hash': passwordHash,
       if (firstName != null) 'first_name': firstName,
       if (lastName != null) 'last_name': lastName,
       if (birthDate != null) 'birth_date': birthDate,
@@ -439,6 +527,8 @@ class DonorProfileTableCompanion
 
   DonorProfileTableCompanion copyWith({
     Value<int>? id,
+    Value<String>? email,
+    Value<String>? passwordHash,
     Value<String>? firstName,
     Value<String>? lastName,
     Value<DateTime>? birthDate,
@@ -449,6 +539,8 @@ class DonorProfileTableCompanion
   }) {
     return DonorProfileTableCompanion(
       id: id ?? this.id,
+      email: email ?? this.email,
+      passwordHash: passwordHash ?? this.passwordHash,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       birthDate: birthDate ?? this.birthDate,
@@ -464,6 +556,12 @@ class DonorProfileTableCompanion
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (passwordHash.present) {
+      map['password_hash'] = Variable<String>(passwordHash.value);
     }
     if (firstName.present) {
       map['first_name'] = Variable<String>(firstName.value);
@@ -493,6 +591,8 @@ class DonorProfileTableCompanion
   String toString() {
     return (StringBuffer('DonorProfileTableCompanion(')
           ..write('id: $id, ')
+          ..write('email: $email, ')
+          ..write('passwordHash: $passwordHash, ')
           ..write('firstName: $firstName, ')
           ..write('lastName: $lastName, ')
           ..write('birthDate: $birthDate, ')
@@ -5575,6 +5675,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$DonorProfileTableTableCreateCompanionBuilder =
     DonorProfileTableCompanion Function({
       Value<int> id,
+      required String email,
+      required String passwordHash,
       required String firstName,
       required String lastName,
       required DateTime birthDate,
@@ -5586,6 +5688,8 @@ typedef $$DonorProfileTableTableCreateCompanionBuilder =
 typedef $$DonorProfileTableTableUpdateCompanionBuilder =
     DonorProfileTableCompanion Function({
       Value<int> id,
+      Value<String> email,
+      Value<String> passwordHash,
       Value<String> firstName,
       Value<String> lastName,
       Value<DateTime> birthDate,
@@ -5606,6 +5710,16 @@ class $$DonorProfileTableTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5659,6 +5773,16 @@ class $$DonorProfileTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get firstName => $composableBuilder(
     column: $table.firstName,
     builder: (column) => ColumnOrderings(column),
@@ -5706,6 +5830,14 @@ class $$DonorProfileTableTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get passwordHash => $composableBuilder(
+    column: $table.passwordHash,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get firstName =>
       $composableBuilder(column: $table.firstName, builder: (column) => column);
@@ -5770,6 +5902,8 @@ class $$DonorProfileTableTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> passwordHash = const Value.absent(),
                 Value<String> firstName = const Value.absent(),
                 Value<String> lastName = const Value.absent(),
                 Value<DateTime> birthDate = const Value.absent(),
@@ -5779,6 +5913,8 @@ class $$DonorProfileTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
               }) => DonorProfileTableCompanion(
                 id: id,
+                email: email,
+                passwordHash: passwordHash,
                 firstName: firstName,
                 lastName: lastName,
                 birthDate: birthDate,
@@ -5790,6 +5926,8 @@ class $$DonorProfileTableTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                required String email,
+                required String passwordHash,
                 required String firstName,
                 required String lastName,
                 required DateTime birthDate,
@@ -5799,6 +5937,8 @@ class $$DonorProfileTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
               }) => DonorProfileTableCompanion.insert(
                 id: id,
+                email: email,
+                passwordHash: passwordHash,
                 firstName: firstName,
                 lastName: lastName,
                 birthDate: birthDate,

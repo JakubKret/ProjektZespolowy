@@ -8,6 +8,8 @@ class DonorProfileWorkflowService {
   DonorProfileWorkflowService(this._db);
 
   Future<int> createDonorProfile({
+    required String email,
+    required String passwordHash,
     required String firstName,
     required String lastName,
     required DateTime birthDate,
@@ -17,6 +19,8 @@ class DonorProfileWorkflowService {
   }) {
     return _db.donorProfileDao.createProfile(
       DonorProfileTableCompanion.insert(
+        email: email.trim().toLowerCase(),
+        passwordHash: passwordHash,
         firstName: firstName,
         lastName: lastName,
         birthDate: birthDate,

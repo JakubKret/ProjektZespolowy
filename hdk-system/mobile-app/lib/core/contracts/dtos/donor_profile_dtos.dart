@@ -1,4 +1,6 @@
 class CreateDonorProfileRequest {
+  final String email;
+  final String passwordHash;
   final String firstName;
   final String lastName;
   final DateTime birthDate;
@@ -7,6 +9,8 @@ class CreateDonorProfileRequest {
   final String? rhFactor;
 
   const CreateDonorProfileRequest({
+    required this.email,
+    required this.passwordHash,
     required this.firstName,
     required this.lastName,
     required this.birthDate,

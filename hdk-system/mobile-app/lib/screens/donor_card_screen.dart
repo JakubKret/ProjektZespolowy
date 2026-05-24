@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../core/providers/app_providers.dart';
+import '../core/session/donor_session.dart';
 import 'add_donation_screen.dart';
+import 'login_screen.dart';
 import 'menstrual_cycle_screen.dart';
 
-class DonorCardScreen extends StatelessWidget {
-  // Przykładowe zmockowane dane - docelowo z backendu
-  final double totalLiters = 4.5;
-  final String bloodType = 'A Rh-';
-  final int daysToNextDonation = 14;
-  final String nextDonationDate = '06.06.2026';
-
-  const DonorCardScreen({Key? key}) : super(key: key);
+class DonorCardScreen extends ConsumerWidget {
+  const DonorCardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final dashboardAsync = ref.watch(donorDashboardProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -28,29 +28,82 @@ class DonorCardScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Color(0xFFD32F2F)),
+            tooltip: 'Wyloguj się',
+            onPressed: () async {
+              await logout(ref);
+              if (!context.mounted) return;
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              _buildBloodTypeBadge(theme),
-              const Spacer(),
-              _buildMainCounter(theme),
-              const Spacer(),
-              _buildKarencjaInfo(theme),
-              const SizedBox(height: 30),
-              _buildActionButtons(context, theme),
-            ],
+        child: dashboardAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFD32F2F)),
           ),
+          error: (error, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                'Nie udało się wczytać profilu: $error',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          data: (dashboard) {
+            if (dashboard == null) {
+              return const Center(
+                child: Text('Zaloguj się, aby zobaczyć kartę dawcy.'),
+              );
+            }
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '${dashboard.profile.firstName} ${dashboard.profile.lastName}',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    dashboard.profile.email,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildBloodTypeBadge(theme, dashboard.bloodTypeLabel),
+                  const Spacer(),
+                  _buildMainCounter(theme, dashboard.totalLiters),
+                  const Spacer(),
+                  _buildKarencjaInfo(theme, dashboard),
+                  const SizedBox(height: 30),
+                  _buildActionButtons(context, ref, theme),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildBloodTypeBadge(ThemeData theme) {
+  Widget _buildBloodTypeBadge(ThemeData theme, String bloodType) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
@@ -75,7 +128,7 @@ class DonorCardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMainCounter(ThemeData theme) {
+  Widget _buildMainCounter(ThemeData theme, double totalLiters) {
     return Column(
       children: [
         Text(
@@ -94,7 +147,7 @@ class DonorCardScreen extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withOpacity(0.15),
+                color: Colors.red.withValues(alpha: 0.15),
                 blurRadius: 20,
                 spreadRadius: 5,
                 offset: const Offset(0, 8),
@@ -130,7 +183,9 @@ class DonorCardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildKarencjaInfo(ThemeData theme) {
+  Widget _buildKarencjaInfo(ThemeData theme, DonorDashboardData dashboard) {
+    final canDonate = dashboard.eligibility.canDonate;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20.0),
@@ -142,22 +197,29 @@ class DonorCardScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Następna donacja możliwa za:',
+            canDonate
+                ? 'Możesz oddać krew już teraz'
+                : 'Następna donacja możliwa za:',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: Colors.grey.shade700,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          Text(
-            '$daysToNextDonation DNI',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: Colors.black87,
-              fontWeight: FontWeight.bold,
+          if (!canDonate) ...[
+            const SizedBox(height: 8),
+            Text(
+              '${dashboard.daysUntilNextDonation} DNI',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: 4),
           Text(
-            'Planowana data: $nextDonationDate',
+            canDonate
+                ? 'Brak aktywnej karencji'
+                : 'Planowana data: ${dashboard.nextDonationDateLabel}',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.grey.shade500,
             ),
@@ -167,18 +229,19 @@ class DonorCardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, ThemeData theme) {
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref, ThemeData theme) {
     return Row(
       children: [
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const AddDonationScreen(),
                 ),
               );
+              invalidateDonorData(ref);
             },
             icon: const Icon(Icons.add),
             label: const Text('Dodaj wpis'),
@@ -195,13 +258,14 @@ class DonorCardScreen extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         IconButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const MenstrualCycleScreen(),
               ),
             );
+            invalidateDonorData(ref);
           },
           icon: const Icon(Icons.water_drop, color: Colors.pinkAccent),
           style: IconButton.styleFrom(
