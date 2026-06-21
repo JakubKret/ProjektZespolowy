@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/bootstrap/test_data_seed.dart';
+import 'core/providers/app_providers.dart';
 import 'core/session/donor_session.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_navigation_screen.dart';
@@ -42,7 +45,22 @@ class _SessionGateState extends ConsumerState<_SessionGate> {
   @override
   void initState() {
     super.initState();
-    _restoreFuture = tryRestoreSession(ref);
+    _restoreFuture = _initTestSession();
+  }
+
+  Future<int?> _initTestSession() async {
+    final restored = await tryRestoreSession(ref);
+    if (restored != null) return restored;
+
+    final db = ref.read(databaseProvider);
+    final workflow = ref.read(donorWorkflowServiceProvider);
+    final donorId = await TestDataSeed.ensureTestUser(db, workflow);
+
+    ref.read(currentDonorIdProvider.notifier).set(donorId);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('logged_in_donor_id', donorId);
+
+    return donorId;
   }
 
   @override
