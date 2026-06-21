@@ -6,6 +6,7 @@ import '../core/session/donor_session.dart';
 import 'add_donation_screen.dart';
 import 'login_screen.dart';
 import 'menstrual_cycle_screen.dart';
+import '../core/workflows/services/backup_service.dart';
 
 class DonorCardScreen extends ConsumerWidget {
   const DonorCardScreen({super.key});
@@ -29,20 +30,56 @@ class DonorCardScreen extends ConsumerWidget {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Color(0xFFD32F2F)),
-            tooltip: 'Wyloguj się',
-            onPressed: () async {
-              await logout(ref);
-              if (!context.mounted) return;
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginScreen(),
-                ),
-                (route) => false,
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Color(0xFFD32F2F)),
+            onSelected: (value) async {
+              if (value == 'export') {
+                await BackupService.exportBackup();
+              } else if (value == 'import') {
+                final success = await BackupService.importBackup();
+                if (success) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Kopia przywrócona. Zaloguj się ponownie.'),
+                    ),
+                  );
+                  await logout(ref);
+                  if (!context.mounted) return;
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              } else if (value == 'logout') {
+                await logout(ref);
+                if (!context.mounted) return;
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                  (route) => false,
+                );
+              }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'export',
+                child: Text('Eksportuj kopię'),
+              ),
+              const PopupMenuItem(
+                value: 'import',
+                child: Text('Przywróć z kopii'),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Text('Wyloguj się'),
+              ),
+            ],
           ),
         ],
       ),

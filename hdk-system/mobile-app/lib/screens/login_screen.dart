@@ -129,48 +129,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  Future<void> _seedDemoAccount() async {
-    setState(() => _isLoading = true);
-    try {
-      final db = ref.read(databaseProvider);
-      final existing =
-          await db.donorProfileDao.getProfileByEmail('dawca@hdk.pl');
-      if (existing == null) {
-        await registerNewDonor(
-          ref,
-          email: 'dawca@hdk.pl',
-          password: 'krew123',
-          firstName: 'Anna',
-          lastName: 'Dawca',
-          sex: 'F',
-          bloodType: 'A',
-          rhFactor: '-',
-        );
-        await logout(ref);
-      }
-      if (!mounted) return;
-      setState(() {
-        _isLoginMode = true;
-        _emailController.text = 'dawca@hdk.pl';
-        _passwordController.text = 'krew123';
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Konto testowe gotowe — kliknij Zaloguj się.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isLoginMode = true;
-        _emailController.text = 'dawca@hdk.pl';
-        _passwordController.text = 'krew123';
-      });
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
+
 
   void _navigateToMainApp() {
     invalidateDonorData(ref);
@@ -362,14 +321,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: const TextStyle(color: Colors.grey),
                 ),
               ),
-              if (_isLoginMode)
-                TextButton(
-                  onPressed: _seedDemoAccount,
-                  child: const Text(
-                    'Wypełnij dane testowe',
-                    style: TextStyle(color: Color(0xFFD32F2F)),
-                  ),
-                ),
+
             ],
           ),
         ),

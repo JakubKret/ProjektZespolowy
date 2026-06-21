@@ -56,6 +56,11 @@ class AppDatabase extends _$AppDatabase {
 
   factory AppDatabase.instance() => _instance ??= AppDatabase();
 
+  static Future<void> closeAndReset() async {
+    await _instance?.close();
+    _instance = null;
+  }
+
   @override
   int get schemaVersion => 2;
 
